@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sơ đồ Database MongoDB (ERD) - Badminton Booking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #0ea5e9;
+      --primary-light: #38bdf8;
+      --accent: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.6;
+      padding: 32px 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 36px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--surface-border);
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      background: rgba(14, 165, 233, 0.15);
+      color: var(--primary-light);
+      margin-bottom: 12px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    header p {
+      color: var(--text-muted);
+      font-size: 16px;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-num {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--primary-light);
+      font-family: var(--mono);
+    }
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+    }
+    .section-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 22px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+
+    .diagram-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 40px;
+      overflow-x: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .collections-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    .collection-box {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .collection-box:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+    }
+    .collection-header {
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid var(--surface-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .coll-name {
+      font-size: 18px;
+      font-weight: 700;
+      font-family: var(--mono);
+      color: #fff;
+    }
+    .coll-tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .coll-body {
+      padding: 16px 20px;
+      font-size: 13px;
+    }
+    .field-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .field-row:last-child {
+      border-bottom: none;
+    }
+    .field-name {
+      font-family: var(--mono);
+      font-weight: 600;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pk-pill {
+      font-size: 9px;
+      padding: 1px 4px;
+      border-radius: 3px;
+      background: #eab308;
+      color: #000;
+      font-weight: 800;
+    }
+    .fk-pill {
+      font-size: 9px;
+      padding: 1px 4px;
+      border-radius: 3px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+    }
+    .field-type {
+      font-family: var(--mono);
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .concurrency-box {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--surface-border);
+      border-left: 4px solid var(--accent);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 40px;
+    }
+    .concurrency-box pre {
+      background: #090d16;
+      border: 1px solid var(--surface-border);
+      padding: 14px 18px;
+      border-radius: 8px;
+      margin-top: 14px;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: #38bdf8;
+      overflow-x: auto;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      padding-top: 24px;
+      border-top: 1px solid var(--surface-border);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">MMA301 - Mobile Application Development</div>
+      <h1>Sơ đồ Cơ Sở Dữ Liệu MongoDB (ERD)</h1>
+      <p>Hệ thống đặt sân cầu lông theo thời gian thực & Ghép kèo giao lưu phong trào (BadmintonConnect)</p>
+    </header>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-num">7</span>
+        <span class="stat-label">Collections Mongoose</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">1</span>
+        <span class="stat-label">Atomic Compound Index</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">5:00</span>
+        <span class="stat-label">Lock TTL Giữ Chỗ (Phút)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">100%</span>
+        <span class="stat-label">Chống Đặt Trùng Lịch</span>
+      </div>
+    </div>
+
+    <div class="section-title">1. Sơ đồ Quan hệ Thực thể Trực quan (ERD Mermaid)</div>
+    <div class="diagram-card">
+      <div class="mermaid">
+erDiagram
+    USERS ||--o{ BOOKINGS : "places (user_id)"
+    USERS ||--o{ MATCH_REQUESTS : "creates (creator_id)"
+    USERS ||--o{ MESSAGES : "sends (sender_id)"
+    USERS ||--o{ TIME_SLOTS : "locks (locked_by)"
+    USERS ||--o{ PAYMENTS : "pays (user_id)"
+    COURTS ||--|{ SUB_COURTS : "embeds (sub_courts)"
+    COURTS ||--o{ TIME_SLOTS : "has (court_id)"
+    COURTS ||--o{ BOOKINGS : "hosts (court_id)"
+    BOOKINGS ||--|{ TIME_SLOTS : "reserves (booking_id)"
+    BOOKINGS ||--o| MATCH_REQUESTS : "links (booking_id)"
+    BOOKINGS ||--o{ PAYMENTS : "records (booking_id)"
+    MATCH_REQUESTS ||--o{ MESSAGES : "contains (match_id)"
+    MATCH_REQUESTS }o--o{ USERS : "joins (current_players)"
+
+    USERS {
+        ObjectId _id PK
+        String full_name
+        String email UK
+        String password_hash
+        String phone
+        String role "user, court_owner, admin"
+        Object profile
+    }
+
+    COURTS {
+        ObjectId _id PK
+        String name
+        String address
+        String district
+        Number hourly_rate
+        Number peak_hour_rate
+        Array sub_courts
+    }
+
+    TIME_SLOTS {
+        ObjectId _id PK
+        ObjectId court_id FK
+        ObjectId sub_court_id
+        String date "YYYY-MM-DD"
+        String start_time
+        String end_time
+        String status "available, locked, booked"
+        ObjectId locked_by FK
+        Date lock_expires_at
+    }
+
+    BOOKINGS {
+        ObjectId _id PK
+        String booking_code UK
+        ObjectId user_id FK
+        ObjectId court_id FK
+        String booking_date
+        Array slots
+        Number total_amount
+        Number deposit_paid
+        String status
+        String qr_checkin_code
+    }
+
+    PAYMENTS {
+        ObjectId _id PK
+        String txn_ref UK
+        ObjectId booking_id FK
+        ObjectId user_id FK
+        Number amount
+        String status
+        String payment_url
+        String response_code
+    }
+
+    MATCH_REQUESTS {
+        ObjectId _id PK
+        ObjectId creator_id FK
+        ObjectId booking_id FK
+        String title
+        Date scheduled_time
+        String required_level
+        Number max_players
+        Array current_players
+        String status
+    }
+
+    MESSAGES {
+        ObjectId _id PK
+        ObjectId match_id FK
+        ObjectId sender_id FK
+        String sender_name
+        String content
+        String message_type
+    }
+      </div>
+    </div>
+
+    <div class="section-title">2. Danh mục 7 Collections & Cấu trúc chi tiết</div>
+    <div class="collections-grid">
+      <!-- Users -->
+      <div class="collection-box">
+        <div class="collection-header">
+          <span class="coll-name">users</span>
+          <span class="coll-tag">Core Collection</span>
+        </div>
+        <div class="coll-body">
+          <div class="field-row"><span class="field-name"><span class="pk-pill">PK</span> _id</span><span class="field-type">ObjectId</span></div>
+          <div class="field-row"><span class="field-name">full_name</span><span class="field-type">String</span></div>
+          <div class="field-row"><span class="field-name">email (UK)</span><span class="field-type">String</span></div>
+          <div class="field-row"><span class="field-name">password_hash</span><span class="field-type">String (bcrypt)</span></div>
+          <div class="field-row"><span class="field-name">phone</span><span class="field-type">String</span></div>
+          <div class="field-row"><span class="field-name">role</span><span class="field-type">Enum(user|court_owner|admin)</span></div>
+          <div class="field-row"><span class="field-name">profile</span><span class="field-type">skill_level, hand, play_type</span></div>
+        </div>
+      </div>
+
+      <!-- Courts -->
+      <div class="collection-box">
+        <div class="collection-header">
+          <span class="coll-name">courts</span>
+          <span class="coll-tag">Core Collection</span>
+        </div>
+        <div class="coll-body">
+          <div class="field-row"><span class="field-name"><span class="pk-pill">PK</span> _id</span><span class="field-type">ObjectId</span></div>
+          <div class="field-row"><span class="field-name">name, address</span><span class="field-type">String</span></div>
+          <div class="field-row"><span class="field-name">district (Index)</span><span class="field-type">String</span></div>
+          <div class="field-row"><span class="field-name">hourly_rate, peak_hour_rate</span><span class="field-type">Number (VND)</span></div>
+          <div class="field-row"><span class="field-name">carpet_type, court_type</span><span class="field-type">String</span></div>
+          <div class="field-row"><span class="field-name">sub_courts</span><span class="field-type">Array[{ id, number, active }]</span></div>
+          <div class="field-row"><span class="field-name">extra_services</span><span class="field-type">Array[{ id, name, price }]</span></div>
+        </div>
+      </div>
+
+      <!-- TimeSlots -->
+      <div class="collection-box">
+        <div class="collection-header">
+          <span class="coll-name">timeslots</span>
+          <span class="coll-tag" style="background: rgba(245, 158, 11, 0.15); color: var(--warning); border-color: rgba(245, 158, 11, 0.3);">Unique Compound Index</span>
+        </div>
+        <div class="coll-body">
+          <div class="field-row"><span class="field-name"><span class="pk-pill">PK</span> _id</span><span class="field-type">ObjectId</span></div>
+          <div class="field-row"><span class="field-name"><span class="fk-pill">FK</span> court_id</span><span class="field-type">ObjectId (Ref Court)</span></div>
+          <div class="field-row"><span class="field-name">date, start_time, end_time</span><span class="field-type">String (YYYY-MM-DD, HH:mm)</span></div>
+          <div class="field-row"><span class="field-name">status</span><span class="field-type">available | locked | booked</span></div>
+          <div class="field-row"><span class="field-name"><span class="fk-pill">FK</span> locked_by</span><span class="field-type">ObjectId (Ref User)</span></div>
+          <div class="field-row"><span class="field-name">lock_expires_at</span><span class="field-type">Date (5 min lock)</span></div>
+          <div class="field-row"><span class="field-name"><span class="fk-pill">FK</span> booking_id</span><span class="field-type">ObjectId (Ref Booking)</span></div>
+        </div>
+      </div>
+
+      <!-- Bookings -->
+      <div class="collection-box">
+        <div class="collection-header">
+          <span class="coll-name">bookings</span>
+          <span class="coll-tag">Core Collection</span>
+        </div>
+        <div class="coll-body">
+          <div class="field-row"><span class="field-name"><span class="pk-pill">PK</span> _id</span><span class="field-type">ObjectId</span></div>
+          <div class="field-row"><span class="field-name">booking_code (UK)</span><span class="field-type">String (BB-YYYYMMDD-XXXX)</span></div>
+          <div class="field-row"><span class="field-name"><span class="fk-pill">FK</span> user_id, court_id</span><span class="field-type">ObjectId Ref</span></div>
+          <div class="field-row"><span class="field-name">slots, slot_ids</span><span class="field-type">Array[String], Array[ObjectId]</span></div>
+          <div class="field-row"><span class="field-name">total_amount, deposit_paid</span><span class="field-type">Number (VND)</span></div>
+          <div class="field-row"><span class="field-name">status</span><span class="field-type">locked_pending | confirmed...</span></div>
+          <div class="field-row"><span class="field-name">qr_checkin_code</span><span class="field-type">String (QR Code)</span></div>
+        </div>
+      </div>
+
+      <!-- Payments -->
+      <div class="collection-box">
+        <div class="collection-header">
+          <span class="coll-name">payments</span>
+          <span class="coll-tag" style="background: rgba(14, 165, 233, 0.15); color: var(--primary-light); border-color: rgba(56, 189, 248, 0.3);">VNPay / MoMo Gateway</span>
+        </div>
+        <div class="coll-body">
+          <div class="field-row"><span class="field-name"><span class="pk-pill">PK</span> _id</span><span class="field-type">ObjectId</span></div>
+          <div class="field-row"><span class="field-name">txn_ref (UK)</span><span class="field-type">String (Unique Ref)</span></div>
+          <div class="field-row"><span class="field-name"><span class="fk-pill">FK</span> booking_id</span><span class="field-type">ObjectId (Index)</span></div>
+          <div class="field-row"><span class="field-name"><span class="fk-pill">FK</span> user_id</span><span class="field-type">ObjectId (Ref User)</span></div>
+          <div class="field-row"><span class="field-name">amount</span><span class="field-type">Number (VND)</span></div>
+          <div class="field-row"><span class="field-name">status</span><span class="field-type">pending | paid | failed</span></div>
+          <div class="field-row"><span class="field-name">response_code, paid_at</span><span class="field-type">String ('00'), Date</span></div>
+        </div>
+      </div>
+
+      <!-- MatchRequests -->
+      <div class="collection-box">
+        <div class="collection-header">
+          <span class="coll-name">matchrequests</span>
+          <span class="coll-tag">Matchmaking</span>
+        </div>
+        <div class="coll-body">
+          <div class="field-row"><span class="field-name"><span class="pk-pill">PK</span> _id</span><span class="field-type">ObjectId</span></div>
+          <div class="field-row"><span class="field-name"><span class="fk-pill">FK</span> creator_id</span><span class="field-type">ObjectId (Ref User)</span></div>
+          <div class="field-row"><span class="field-name"><span class="fk-pill">FK</span> booking_id, court_id</span><span class="field-type">ObjectId (Optional)</span></div>
+          <div class="field-row"><span class="field-name">title, scheduled_time</span><span class="field-type">String, Date</span></div>
+          <div class="field-row"><span class="field-name">required_level</span><span class="field-type">beginner | intermediate...</span></div>
+          <div class="field-row"><span class="field-name">current_players</span><span class="field-type">Array[ObjectId Ref Users]</span></div>
+          <div class="field-row"><span class="field-name">status</span><span class="field-type">open | full | cancelled</span></div>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="collection-box">
+        <div class="collection-header">
+          <span class="coll-name">messages</span>
+          <span class="coll-tag">Socket.io Room</span>
+        </div>
+        <div class="coll-body">
+          <div class="field-row"><span class="field-name"><span class="pk-pill">PK</span> _id</span><span class="field-type">ObjectId</span></div>
+          <div class="field-row"><span class="field-name"><span class="fk-pill">FK</span> match_id</span><span class="field-type">ObjectId (Index: room)</span></div>
+          <div class="field-row"><span class="field-name"><span class="fk-pill">FK</span> sender_id</span><span class="field-type">ObjectId (Ref User | null)</span></div>
+          <div class="field-row"><span class="field-name">sender_name, content</span><span class="field-type">String</span></div>
+          <div class="field-row"><span class="field-name">message_type</span><span class="field-type">text | system_event</span></div>
+          <div class="field-row"><span class="field-name">created_at</span><span class="field-type">Date (Timestamp)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="concurrency-box">
+      <h3 style="color: #fff; margin-bottom: 8px;">Kỹ thuật Concurrency: Atomic Slot Locking trong MongoDB</h3>
+      <p style="color: var(--text-muted); font-size: 14px;">
+        Để chống Race Condition khi 2 người dùng cùng bấm giữ chỗ 1 khung giờ ở cùng 1 phần nghìn giây, hệ thống không dùng lệnh kiểm tra rồi lưu thông thường mà sử dụng lệnh <code>findOneAndUpdate</code> cấp nguyên tử của MongoDB:
+      </p>
+      <pre>const lockedSlot = await TimeSlot.findOneAndUpdate(
+  { _id: slotId, status: 'available' },
+  {
+    $set: {
+      status: 'locked',
+      locked_by: userId,
+      lock_expires_at: new Date(Date.now() + 5 * 60 * 1000) // Khóa 5:00 phút
+    }
+  },
+  { new: true }
+);
+
+if (!lockedSlot) {
+  // Trả về lỗi 409 Conflict: Khung giờ vừa có người khác nhanh tay chọn trước!
+}</pre>
+    </div>
+
+    <footer>
+      Dự án MMA301 - BadmintonConnect &copy; 2026. Sơ đồ CSDL MongoDB đã chuẩn hóa và sẵn sàng nghiệm thu đồ án.
+    </footer>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#1e293b',
+        primaryColor: '#0ea5e9',
+        primaryTextColor: '#fff',
+        primaryBorderColor: '#38bdf8',
+        lineColor: '#38bdf8',
+        secondaryColor: '#334155',
+        tertiaryColor: '#0f172a'
+      }
+    });
+  </script>
+</body>
+</html>
