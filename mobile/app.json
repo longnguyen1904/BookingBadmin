@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Badminton Booking",
+    "slug": "badminton-booking",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0D9488"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.badmintonbooking.app"
+    },
+    "android": {
+      "package": "com.badmintonbooking.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0D9488"
+      },
+      "usesCleartextTraffic": true
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
