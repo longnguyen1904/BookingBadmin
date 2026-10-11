@@ -1,0 +1,75 @@
+[
+  {
+    "_id": "6aeae7c2ec641c6f1a9f2f9f",
+    "creator_id": "6aeae7c1ec641c6f1a9f2f46",
+    "booking_id": "6aeae7c2ec641c6f1a9f2f93",
+    "court_id": "6aeae7c1ec641c6f1a9f2f5b",
+    "title": "Cần tìm 2 tay vợt Nam/Nữ trình độ TB+ đánh đôi sân Cầu Giấy lúc 18h tối nay",
+    "location_name": "Cụm Sân Cầu Lông Cầu Giấy Arena (Sân 1)",
+    "district": "Cầu Giấy",
+    "scheduled_date": "2026-11-04",
+    "scheduled_time": "2026-11-04T11:00:00.000Z",
+    "time_range": "18:00 - 20:00",
+    "required_level": "intermediate",
+    "max_players": 6,
+    "current_players": [
+      "6aeae7c1ec641c6f1a9f2f46",
+      "6aeae7c1ec641c6f1a9f2f48",
+      "6aeae7c1ec641c6f1a9f2f47"
+    ],
+    "cost_per_person": 75000,
+    "notes": "Cầu Hải Yến S90 có sẵn, anh em mang vợt đến chiến vui vẻ hòa đồng nhé!",
+    "status": "open",
+    "created_at": "2026-11-04T08:07:30.357Z",
+    "updated_at": "2026-11-04T08:07:30.357Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aeae7c2ec641c6f1a9f2fa1",
+    "creator_id": "6aeae7c1ec641c6f1a9f2f47",
+    "booking_id": null,
+    "court_id": "6aeae7c1ec641c6f1a9f2f66",
+    "title": "Tuyển 3 bạn giao lưu trình độ Khá - Đánh đôi nam căng tay tại Chùa Láng",
+    "location_name": "Sân Cầu Lông Đống Đa Star Club (Sân 2)",
+    "district": "Đống Đa",
+    "scheduled_date": "2026-11-04",
+    "scheduled_time": "2026-11-04T12:30:00.000Z",
+    "time_range": "19:30 - 21:30",
+    "required_level": "advanced",
+    "max_players": 6,
+    "current_players": [
+      "6aeae7c1ec641c6f1a9f2f47",
+      "6aeae7c1ec641c6f1a9f2f46"
+    ],
+    "cost_per_person": 85000,
+    "notes": "Share đều tiền sân + cầu, có nước trà đá miễn phí.",
+    "status": "open",
+    "created_at": "2026-11-04T08:07:30.358Z",
+    "updated_at": "2026-11-04T08:07:30.358Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aeae7c2ec641c6f1a9f2fa3",
+    "creator_id": "6aeae7c1ec641c6f1a9f2f48",
+    "booking_id": null,
+    "court_id": "6aeae7c1ec641c6f1a9f2f6f",
+    "title": "Kèo Newbie thân thiện cho người mới chơi - Giao lưu rèn kỹ thuật cơ bản",
+    "location_name": "Tổ Hợp Cầu Lông Thanh Xuân Pro (Sân 3)",
+    "district": "Thanh Xuân",
+    "scheduled_date": "2026-11-05",
+    "scheduled_time": "2026-11-05T10:30:00.000Z",
+    "time_range": "17:30 - 19:30",
+    "required_level": "beginner",
+    "max_players": 8,
+    "current_players": [
+      "6aeae7c1ec641c6f1a9f2f48",
+      "6aeae7c1ec641c6f1a9f2f49"
+    ],
+    "cost_per_person": 60000,
+    "notes": "Phù hợp các bạn mới tập đập/phông cầu, hỗ trợ hướng dẫn nhiệt tình.",
+    "status": "open",
+    "created_at": "2026-11-04T08:07:30.359Z",
+    "updated_at": "2026-11-04T08:07:30.359Z",
+    "__v": 0
+  }
+]

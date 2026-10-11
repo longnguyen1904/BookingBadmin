@@ -1,0 +1,139 @@
+[
+  {
+    "_id": "6aeae7c2ec641c6f1a9f2f93",
+    "booking_code": "BB-20261104-1001",
+    "user_id": "6aeae7c1ec641c6f1a9f2f46",
+    "court_id": "6aeae7c1ec641c6f1a9f2f5b",
+    "sub_court_id": "6aeae7c1ec641c6f1a9f2f4b",
+    "sub_court_name": "Sân 1",
+    "booking_date": "2026-11-04",
+    "start_time": "18:00",
+    "end_time": "20:00",
+    "slots": [
+      "18:00",
+      "19:00"
+    ],
+    "slot_ids": [
+      "6aeae7c29e958980a9b45799",
+      "6aeae7c29e958980a9b4579a"
+    ],
+    "extra_services": [
+      {
+        "service_id": "water_bottle",
+        "name": "Nước suối Aquafina 500ml",
+        "quantity": 4,
+        "price": 10000,
+        "_id": "6aeae7c2ec641c6f1a9f2f94"
+      },
+      {
+        "service_id": "shuttlecock_tube",
+        "name": "Ống cầu lông Hải Yến S90",
+        "quantity": 1,
+        "price": 220000,
+        "_id": "6aeae7c2ec641c6f1a9f2f95"
+      }
+    ],
+    "court_fee": 260000,
+    "services_fee": 260000,
+    "total_amount": 520000,
+    "deposit_paid": 260000,
+    "status": "confirmed",
+    "lock_expires_at": null,
+    "payment_info": {
+      "transaction_id": "VNP14589201",
+      "payment_method": "VNPAY",
+      "pay_time": "2026-11-04T08:07:30.337Z"
+    },
+    "qr_checkin_code": "BBQR|BB-20261104-1001|DEMO",
+    "checked_in_at": null,
+    "cancel_reason": "",
+    "penalty_amount": 0,
+    "is_reviewed": false,
+    "created_at": "2026-11-04T08:07:30.342Z",
+    "updated_at": "2026-11-04T08:07:30.342Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aeae7c2ec641c6f1a9f2f99",
+    "booking_code": "BB-20261104-1002",
+    "user_id": "6aeae7c1ec641c6f1a9f2f47",
+    "court_id": "6aeae7c1ec641c6f1a9f2f5b",
+    "sub_court_id": "6aeae7c1ec641c6f1a9f2f4c",
+    "sub_court_name": "Sân 2",
+    "booking_date": "2026-11-04",
+    "start_time": "19:00",
+    "end_time": "21:00",
+    "slots": [
+      "19:00",
+      "20:00"
+    ],
+    "slot_ids": [
+      "6aeae7c29e958980a9b457ac",
+      "6aeae7c29e958980a9b457ad"
+    ],
+    "extra_services": [
+      {
+        "service_id": "racket_rental",
+        "name": "Thuê vợt cầu lông Yonex",
+        "quantity": 2,
+        "price": 35000,
+        "_id": "6aeae7c2ec641c6f1a9f2f9a"
+      }
+    ],
+    "court_fee": 260000,
+    "services_fee": 70000,
+    "total_amount": 330000,
+    "deposit_paid": 165000,
+    "status": "completed",
+    "lock_expires_at": null,
+    "payment_info": {
+      "transaction_id": "MOMO9988123",
+      "payment_method": "MOMO",
+      "pay_time": "2026-11-04T08:07:30.352Z"
+    },
+    "qr_checkin_code": "BBQR|BB-20261104-1002|DEMO",
+    "checked_in_at": "2026-11-04T08:07:30.352Z",
+    "cancel_reason": "",
+    "penalty_amount": 0,
+    "is_reviewed": false,
+    "created_at": "2026-11-04T08:07:30.353Z",
+    "updated_at": "2026-11-04T08:07:30.353Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aeae7c2ec641c6f1a9f2f9d",
+    "booking_code": "BB-20261104-0988",
+    "user_id": "6aeae7c1ec641c6f1a9f2f46",
+    "court_id": "6aeae7c1ec641c6f1a9f2f66",
+    "sub_court_id": "6aeae7c1ec641c6f1a9f2f4f",
+    "sub_court_name": "Sân 1",
+    "booking_date": "2026-11-04",
+    "start_time": "06:00",
+    "end_time": "08:00",
+    "slots": [
+      "06:00",
+      "07:00"
+    ],
+    "slot_ids": [],
+    "court_fee": 160000,
+    "services_fee": 20000,
+    "total_amount": 180000,
+    "deposit_paid": 90000,
+    "status": "completed",
+    "lock_expires_at": null,
+    "payment_info": {
+      "transaction_id": "VNP14500112",
+      "payment_method": "VNPAY",
+      "pay_time": "2026-11-04T03:07:30.355Z"
+    },
+    "qr_checkin_code": "BBQR|BB-20261104-0988|DEMO",
+    "checked_in_at": "2026-11-04T05:07:30.355Z",
+    "cancel_reason": "",
+    "penalty_amount": 0,
+    "is_reviewed": false,
+    "extra_services": [],
+    "created_at": "2026-11-04T08:07:30.356Z",
+    "updated_at": "2026-11-04T08:07:30.356Z",
+    "__v": 0
+  }
+]
