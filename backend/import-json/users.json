@@ -1,0 +1,87 @@
+[
+  {
+    "_id": "6aeae7c1ec641c6f1a9f2f45",
+    "full_name": "Quản Trị Hệ Thống (Admin)",
+    "email": "admin@badmintonbooking.vn",
+    "password_hash": "$2a$10$4SG/yf1dzikaxUOd.zQtKuS31GtaW9YDspdNQ6jJXWLLkk67NdqJC",
+    "phone": "0901234567",
+    "avatar": "https://ui-avatars.com/api/?background=0f766e&color=fff&name=Admin",
+    "role": "admin",
+    "profile": {
+      "skill_level": "advanced",
+      "dominant_hand": "right",
+      "preferred_play": "double"
+    },
+    "__v": 0,
+    "created_at": "2026-11-04T08:07:29.955Z",
+    "updated_at": "2026-11-04T08:07:29.955Z"
+  },
+  {
+    "_id": "6aeae7c1ec641c6f1a9f2f46",
+    "full_name": "Nguyễn Minh Quân",
+    "email": "quan@gmail.com",
+    "password_hash": "$2a$10$4SG/yf1dzikaxUOd.zQtKuS31GtaW9YDspdNQ6jJXWLLkk67NdqJC",
+    "phone": "0988112233",
+    "avatar": "https://ui-avatars.com/api/?background=0284c7&color=fff&name=Minh+Quan",
+    "role": "user",
+    "profile": {
+      "skill_level": "intermediate",
+      "dominant_hand": "right",
+      "preferred_play": "double"
+    },
+    "__v": 0,
+    "created_at": "2026-11-04T08:07:29.956Z",
+    "updated_at": "2026-11-04T08:07:29.956Z"
+  },
+  {
+    "_id": "6aeae7c1ec641c6f1a9f2f47",
+    "full_name": "Trần Hoàng Nam",
+    "email": "nam@gmail.com",
+    "password_hash": "$2a$10$4SG/yf1dzikaxUOd.zQtKuS31GtaW9YDspdNQ6jJXWLLkk67NdqJC",
+    "phone": "0977334455",
+    "avatar": "https://ui-avatars.com/api/?background=4f46e5&color=fff&name=Hoang+Nam",
+    "role": "user",
+    "profile": {
+      "skill_level": "advanced",
+      "dominant_hand": "left",
+      "preferred_play": "single"
+    },
+    "__v": 0,
+    "created_at": "2026-11-04T08:07:29.956Z",
+    "updated_at": "2026-11-04T08:07:29.956Z"
+  },
+  {
+    "_id": "6aeae7c1ec641c6f1a9f2f48",
+    "full_name": "Lê Thu Hà",
+    "email": "ha@gmail.com",
+    "password_hash": "$2a$10$4SG/yf1dzikaxUOd.zQtKuS31GtaW9YDspdNQ6jJXWLLkk67NdqJC",
+    "phone": "0912556677",
+    "avatar": "https://ui-avatars.com/api/?background=db2777&color=fff&name=Thu+Ha",
+    "role": "user",
+    "profile": {
+      "skill_level": "intermediate",
+      "dominant_hand": "right",
+      "preferred_play": "double"
+    },
+    "__v": 0,
+    "created_at": "2026-11-04T08:07:29.956Z",
+    "updated_at": "2026-11-04T08:07:29.956Z"
+  },
+  {
+    "_id": "6aeae7c1ec641c6f1a9f2f49",
+    "full_name": "Phạm Đức Anh",
+    "email": "ducanh@gmail.com",
+    "password_hash": "$2a$10$4SG/yf1dzikaxUOd.zQtKuS31GtaW9YDspdNQ6jJXWLLkk67NdqJC",
+    "phone": "0933889900",
+    "avatar": "https://ui-avatars.com/api/?background=d97706&color=fff&name=Duc+Anh",
+    "role": "user",
+    "profile": {
+      "skill_level": "beginner",
+      "dominant_hand": "right",
+      "preferred_play": "double"
+    },
+    "__v": 0,
+    "created_at": "2026-11-04T08:07:29.956Z",
+    "updated_at": "2026-11-04T08:07:29.956Z"
+  }
+]

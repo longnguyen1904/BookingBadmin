@@ -1,0 +1,371 @@
+[
+  {
+    "_id": "6aeae7c1ec641c6f1a9f2f5b",
+    "name": "Cụm Sân Cầu Lông Cầu Giấy Arena",
+    "address": "Số 35 Trần Quý Kiên, Dịch Vọng, Cầu Giấy, Hà Nội",
+    "district": "Cầu Giấy",
+    "city": "Hà Nội",
+    "images": [
+      "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=900&q=80"
+    ],
+    "open_time": "05:00",
+    "close_time": "23:00",
+    "hourly_rate": 90000,
+    "peak_hour_rate": 130000,
+    "peak_hours": {
+      "start": "17:00",
+      "end": "21:00"
+    },
+    "carpet_type": "Thảm Yonex",
+    "court_type": "indoor",
+    "amenities": [
+      "Wifi tốc độ cao",
+      "Thảm Yonex chuẩn BWF",
+      "Tắm nóng lạnh",
+      "Bãi đỗ ô tô",
+      "Căng tin nước giải khát"
+    ],
+    "sub_courts": [
+      {
+        "sub_court_id": "6aeae7c1ec641c6f1a9f2f4b",
+        "court_number": "Sân 1",
+        "is_active": true,
+        "_id": "6aeae7c1ec641c6f1a9f2f5c"
+      },
+      {
+        "sub_court_id": "6aeae7c1ec641c6f1a9f2f4c",
+        "court_number": "Sân 2",
+        "is_active": true,
+        "_id": "6aeae7c1ec641c6f1a9f2f5d"
+      },
+      {
+        "sub_court_id": "6aeae7c1ec641c6f1a9f2f4d",
+        "court_number": "Sân 3",
+        "is_active": true,
+        "_id": "6aeae7c1ec641c6f1a9f2f5e"
+      },
+      {
+        "sub_court_id": "6aeae7c1ec641c6f1a9f2f4e",
+        "court_number": "Sân 4",
+        "is_active": true,
+        "_id": "6aeae7c1ec641c6f1a9f2f5f"
+      }
+    ],
+    "rating_avg": 4.9,
+    "rating_count": 38,
+    "reviews": [
+      {
+        "user_id": "6aeae7c1ec641c6f1a9f2f46",
+        "user_name": "Nguyễn Minh Quân",
+        "rating": 5,
+        "comment": "Thảm Yonex cực bám chân, trần cao 11m không bị chói đèn LED!",
+        "_id": "6aeae7c1ec641c6f1a9f2f60",
+        "created_at": "2026-11-04T08:07:29.968Z"
+      },
+      {
+        "user_id": "6aeae7c1ec641c6f1a9f2f48",
+        "user_name": "Lê Thu Hà",
+        "rating": 5,
+        "comment": "Nhà vệ sinh sạch sẽ, chủ sân nhiệt tình, check-in QR rất nhanh.",
+        "_id": "6aeae7c1ec641c6f1a9f2f61",
+        "created_at": "2026-11-04T08:07:29.968Z"
+      }
+    ],
+    "extra_services": [
+      {
+        "_id": "6aeae7c1ec641c6f1a9f2f62",
+        "service_id": "racket_rental",
+        "name": "Thuê vợt cầu lông Yonex",
+        "price": 35000,
+        "unit": "cây"
+      },
+      {
+        "_id": "6aeae7c1ec641c6f1a9f2f63",
+        "service_id": "water_bottle",
+        "name": "Nước suối Aquafina 500ml",
+        "price": 10000,
+        "unit": "chai"
+      },
+      {
+        "_id": "6aeae7c1ec641c6f1a9f2f64",
+        "service_id": "shuttlecock_tube",
+        "name": "Ống cầu lông Hải Yến S90",
+        "price": 220000,
+        "unit": "ống (12 quả)"
+      },
+      {
+        "_id": "6aeae7c1ec641c6f1a9f2f65",
+        "service_id": "grip_tape",
+        "name": "Quấn cán vợt VS chống trơn",
+        "price": 15000,
+        "unit": "cái"
+      }
+    ],
+    "__v": 0,
+    "created_at": "2026-11-04T08:07:29.974Z",
+    "updated_at": "2026-11-04T08:07:29.974Z"
+  },
+  {
+    "_id": "6aeae7c1ec641c6f1a9f2f66",
+    "name": "Sân Cầu Lông Đống Đa Star Club",
+    "address": "Ngõ 157 Chùa Láng, Láng Thượng, Đống Đa, Hà Nội",
+    "district": "Đống Đa",
+    "city": "Hà Nội",
+    "images": [
+      "https://images.unsplash.com/photo-1521537634581-0dced2fee2ef?auto=format&fit=crop&w=900&q=80"
+    ],
+    "open_time": "05:00",
+    "close_time": "23:00",
+    "hourly_rate": 80000,
+    "peak_hour_rate": 120000,
+    "peak_hours": {
+      "start": "17:00",
+      "end": "21:00"
+    },
+    "carpet_type": "Thảm PVC",
+    "court_type": "indoor",
+    "amenities": [
+      "Wifi",
+      "Thảm PVC tiêu chuẩn",
+      "Tắm nóng lạnh",
+      "Cho thuê vợt & giày"
+    ],
+    "sub_courts": [
+      {
+        "sub_court_id": "6aeae7c1ec641c6f1a9f2f4f",
+        "court_number": "Sân 1",
+        "is_active": true,
+        "_id": "6aeae7c1ec641c6f1a9f2f67"
+      },
+      {
+        "sub_court_id": "6aeae7c1ec641c6f1a9f2f50",
+        "court_number": "Sân 2",
+        "is_active": true,
+        "_id": "6aeae7c1ec641c6f1a9f2f68"
+      },
+      {
+        "sub_court_id": "6aeae7c1ec641c6f1a9f2f51",
+        "court_number": "Sân 3",
+        "is_active": true,
+        "_id": "6aeae7c1ec641c6f1a9f2f69"
+      },
+      {
+        "sub_court_id": "6aeae7c1ec641c6f1a9f2f52",
+        "court_number": "Sân 4",
+        "is_active": true,
+        "_id": "6aeae7c1ec641c6f1a9f2f6a"
+      }
+    ],
+    "rating_avg": 4.7,
+    "rating_count": 24,
+    "extra_services": [
+      {
+        "_id": "6aeae7c1ec641c6f1a9f2f6b",
+        "service_id": "racket_rental",
+        "name": "Thuê vợt cầu lông Yonex",
+        "price": 35000,
+        "unit": "cây"
+      },
+      {
+        "_id": "6aeae7c1ec641c6f1a9f2f6c",
+        "service_id": "water_bottle",
+        "name": "Nước suối Aquafina 500ml",
+        "price": 10000,
+        "unit": "chai"
+      },
+      {
+        "_id": "6aeae7c1ec641c6f1a9f2f6d",
+        "service_id": "shuttlecock_tube",
+        "name": "Ống cầu lông Hải Yến S90",
+        "price": 220000,
+        "unit": "ống (12 quả)"
+      },
+      {
+        "_id": "6aeae7c1ec641c6f1a9f2f6e",
+        "service_id": "grip_tape",
+        "name": "Quấn cán vợt VS chống trơn",
+        "price": 15000,
+        "unit": "cái"
+      }
+    ],
+    "reviews": [],
+    "__v": 0,
+    "created_at": "2026-11-04T08:07:29.974Z",
+    "updated_at": "2026-11-04T08:07:29.974Z"
+  },
+  {
+    "_id": "6aeae7c1ec641c6f1a9f2f6f",
+    "name": "Tổ Hợp Cầu Lông Thanh Xuân Pro",
+    "address": "Số 286 Nguyễn Xiển, Hạ Đình, Thanh Xuân, Hà Nội",
+    "district": "Thanh Xuân",
+    "city": "Hà Nội",
+    "images": [
+      "https://images.unsplash.com/photo-1613918431703-aa50889e3be9?auto=format&fit=crop&w=900&q=80"
+    ],
+    "open_time": "05:00",
+    "close_time": "23:00",
+    "hourly_rate": 85000,
+    "peak_hour_rate": 125000,
+    "peak_hours": {
+      "start": "17:00",
+      "end": "21:00"
+    },
+    "carpet_type": "Thảm Enlio",
+    "court_type": "indoor",
+    "amenities": [
+      "Wifi",
+      "Thảm Enlio 5.0mm",
+      "Trần cao 10m",
+      "Bãi gửi xe miễn phí"
+    ],
+    "sub_courts": [
+      {
+        "sub_court_id": "6aeae7c1ec641c6f1a9f2f53",
+        "court_number": "Sân 1",
+        "is_active": true,
+        "_id": "6aeae7c1ec641c6f1a9f2f70"
+      },
+      {
+        "sub_court_id": "6aeae7c1ec641c6f1a9f2f54",
+        "court_number": "Sân 2",
+        "is_active": true,
+        "_id": "6aeae7c1ec641c6f1a9f2f71"
+      },
+      {
+        "sub_court_id": "6aeae7c1ec641c6f1a9f2f55",
+        "court_number": "Sân 3",
+        "is_active": true,
+        "_id": "6aeae7c1ec641c6f1a9f2f72"
+      },
+      {
+        "sub_court_id": "6aeae7c1ec641c6f1a9f2f56",
+        "court_number": "Sân 4",
+        "is_active": true,
+        "_id": "6aeae7c1ec641c6f1a9f2f73"
+      },
+      {
+        "sub_court_id": "6aeae7c1ec641c6f1a9f2f57",
+        "court_number": "Sân 5",
+        "is_active": true,
+        "_id": "6aeae7c1ec641c6f1a9f2f74"
+      }
+    ],
+    "rating_avg": 4.8,
+    "rating_count": 19,
+    "extra_services": [
+      {
+        "_id": "6aeae7c1ec641c6f1a9f2f75",
+        "service_id": "racket_rental",
+        "name": "Thuê vợt cầu lông Yonex",
+        "price": 35000,
+        "unit": "cây"
+      },
+      {
+        "_id": "6aeae7c1ec641c6f1a9f2f76",
+        "service_id": "water_bottle",
+        "name": "Nước suối Aquafina 500ml",
+        "price": 10000,
+        "unit": "chai"
+      },
+      {
+        "_id": "6aeae7c1ec641c6f1a9f2f77",
+        "service_id": "shuttlecock_tube",
+        "name": "Ống cầu lông Hải Yến S90",
+        "price": 220000,
+        "unit": "ống (12 quả)"
+      },
+      {
+        "_id": "6aeae7c1ec641c6f1a9f2f78",
+        "service_id": "grip_tape",
+        "name": "Quấn cán vợt VS chống trơn",
+        "price": 15000,
+        "unit": "cái"
+      }
+    ],
+    "reviews": [],
+    "__v": 0,
+    "created_at": "2026-11-04T08:07:29.974Z",
+    "updated_at": "2026-11-04T08:07:29.974Z"
+  },
+  {
+    "_id": "6aeae7c1ec641c6f1a9f2f79",
+    "name": "Sân Cầu Lông Tây Hồ Lakeview",
+    "address": "Số 88 Võ Chí Công, Xuân La, Tây Hồ, Hà Nội",
+    "district": "Tây Hồ",
+    "city": "Hà Nội",
+    "images": [
+      "https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?auto=format&fit=crop&w=900&q=80"
+    ],
+    "open_time": "05:00",
+    "close_time": "23:00",
+    "hourly_rate": 70000,
+    "peak_hour_rate": 100000,
+    "peak_hours": {
+      "start": "17:00",
+      "end": "21:00"
+    },
+    "carpet_type": "Sàn gỗ",
+    "court_type": "outdoor",
+    "amenities": [
+      "Thoáng mát",
+      "Đèn pha cao áp",
+      "Quán trà chanh giao lưu"
+    ],
+    "sub_courts": [
+      {
+        "sub_court_id": "6aeae7c1ec641c6f1a9f2f58",
+        "court_number": "Sân 1",
+        "is_active": true,
+        "_id": "6aeae7c1ec641c6f1a9f2f7a"
+      },
+      {
+        "sub_court_id": "6aeae7c1ec641c6f1a9f2f59",
+        "court_number": "Sân 2",
+        "is_active": true,
+        "_id": "6aeae7c1ec641c6f1a9f2f7b"
+      },
+      {
+        "sub_court_id": "6aeae7c1ec641c6f1a9f2f5a",
+        "court_number": "Sân 3",
+        "is_active": true,
+        "_id": "6aeae7c1ec641c6f1a9f2f7c"
+      }
+    ],
+    "rating_avg": 4.5,
+    "rating_count": 14,
+    "extra_services": [
+      {
+        "_id": "6aeae7c1ec641c6f1a9f2f7d",
+        "service_id": "racket_rental",
+        "name": "Thuê vợt cầu lông Yonex",
+        "price": 35000,
+        "unit": "cây"
+      },
+      {
+        "_id": "6aeae7c1ec641c6f1a9f2f7e",
+        "service_id": "water_bottle",
+        "name": "Nước suối Aquafina 500ml",
+        "price": 10000,
+        "unit": "chai"
+      },
+      {
+        "_id": "6aeae7c1ec641c6f1a9f2f7f",
+        "service_id": "shuttlecock_tube",
+        "name": "Ống cầu lông Hải Yến S90",
+        "price": 220000,
+        "unit": "ống (12 quả)"
+      },
+      {
+        "_id": "6aeae7c1ec641c6f1a9f2f80",
+        "service_id": "grip_tape",
+        "name": "Quấn cán vợt VS chống trơn",
+        "price": 15000,
+        "unit": "cái"
+      }
+    ],
+    "reviews": [],
+    "__v": 0,
+    "created_at": "2026-11-04T08:07:29.974Z",
+    "updated_at": "2026-11-04T08:07:29.974Z"
+  }
+]
