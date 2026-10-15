@@ -1,0 +1,242 @@
+{
+  "info": {
+    "name": "Badminton Booking - Full RESTful API Collection",
+    "_postman_id": "badminton-booking-collection-2026",
+    "description": "Bộ tài liệu Postman Collection test toàn bộ API dự án Badminton Booking (Auth, Courts, Concurrency Slot Locking, VNPay Sandbox, Matchmaking, Real-time Chat & Admin Analytics)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Auth & Quản lý Tài khoản",
+      "item": [
+        {
+          "name": "POST /api/auth/register - Đăng ký tài khoản mới",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Nguyễn Văn Tuấn\",\n  \"email\": \"tuan@gmail.com\",\n  \"password\": \"123456\",\n  \"phone\": \"0988776655\",\n  \"profile\": {\n    \"skill_level\": \"intermediate\",\n    \"dominant_hand\": \"right\",\n    \"preferred_play\": \"double\"\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /api/auth/login - Đăng nhập lấy JWT Token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"quan@gmail.com\",\n  \"password\": \"123456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /api/auth/login (Admin) - Đăng nhập Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@badmintonbooking.vn\",\n  \"password\": \"123456\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Cụm sân & Ma trận Khung giờ (Courts & Slots)",
+      "item": [
+        {
+          "name": "GET /api/courts - Danh sách cụm sân & Bộ lọc",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courts?district=Cầu Giấy",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courts"],
+              "query": [{ "key": "district", "value": "Cầu Giấy" }]
+            }
+          }
+        },
+        {
+          "name": "GET /api/courts/:id/slots - Ma trận khung giờ 05:00-23:00",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courts/:courtId/slots?date=2026-11-04",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courts", ":courtId", "slots"],
+              "query": [{ "key": "date", "value": "2026-11-04" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Đặt sân & Khóa Slot 5 phút (Concurrency & Payment)",
+      "item": [
+        {
+          "name": "POST /api/bookings/lock-slot - Tạm khóa slot 5 phút (Atomic Update)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings/lock-slot",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "bookings", "lock-slot"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slot_ids\": [\"<SLOT_ID>\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /api/payment/vnpay/create-url - Sinh URL cổng thanh toán VNPay Sandbox",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payment/vnpay/create-url",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payment", "vnpay", "create-url"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"booking_id\": \"<BOOKING_ID>\",\n  \"payment_method\": \"VNPAY\",\n  \"extra_services\": [\n    { \"service_id\": \"water_bottle\", \"name\": \"Nước suối Aquafina 500ml\", \"quantity\": 2, \"price\": 10000 }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /api/payment/vnpay/return - Hứng kết quả Redirect từ cổng thanh toán",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/payment/vnpay/return?vnp_ResponseCode=00&vnp_TxnRef=<BOOKING_ID>_123&format=json",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payment", "vnpay", "return"],
+              "query": [
+                { "key": "vnp_ResponseCode", "value": "00" },
+                { "key": "vnp_TxnRef", "value": "<BOOKING_ID>_123" },
+                { "key": "format", "value": "json" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/bookings/my-bookings - Lịch sử đặt sân & Vé QR",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings/my-bookings?tab=upcoming",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "bookings", "my-bookings"],
+              "query": [{ "key": "tab", "value": "upcoming" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Ghép kèo giao lưu & Phòng Chat (Matches & Chat)",
+      "item": [
+        {
+          "name": "GET /api/matches - Danh sách kèo giao lưu đang mở",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/matches",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "matches"]
+            }
+          }
+        },
+        {
+          "name": "POST /api/matches/:id/join - Tham gia vào kèo ghép trận giao lưu",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/matches/:matchId/join",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "matches", ":matchId", "join"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Web Admin Analytics & Quét QR Check-in",
+      "item": [
+        {
+          "name": "GET /api/admin/analytics - Thống kê doanh thu & tỷ lệ lấp đầy sân",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/analytics",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "analytics"]
+            }
+          }
+        },
+        {
+          "name": "POST /api/admin/checkin-qr - Quét mã QR vé điện tử Check-in",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/checkin-qr",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "checkin-qr"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"qr_code\": \"BB-20261104-1001\"\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+
