@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Badminton Booking - Web Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen font-sans">
+
+  <!-- Màn hình Đăng nhập Admin -->
+  <div id="loginModal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 border border-slate-100">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 rounded-xl bg-teal-600 text-white flex items-center justify-center text-2xl font-bold">🏸</div>
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Badminton Booking Admin</h2>
+          <p class="text-xs text-slate-500">Hệ thống Quản trị Cụm sân & Thống kê Doanh thu</p>
+        </div>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Email Quản trị viên</label>
+          <input id="loginEmail" type="email" value="admin@badmintonbooking.vn" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Mật khẩu</label>
+          <input id="loginPassword" type="password" value="123456" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" />
+        </div>
+        <div id="loginError" class="text-xs text-red-600 hidden"></div>
+        <button onclick="handleAdminLogin()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-teal-600/20">
+          Đăng nhập Dashboard
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center text-xl font-bold shadow">🏸</div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-extrabold text-slate-900">Badminton Booking</h1>
+            <span class="px-2.5 py-0.5 text-xs font-semibold bg-teal-50 text-teal-700 rounded-full border border-teal-200">Web Admin</span>
+            <span id="socketBadge" class="px-2.5 py-0.5 text-xs font-semibold bg-emerald-50 text-emerald-700 rounded-full flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Real-time Socket.io
+            </span>
+          </div>
+          <p class="text-xs text-slate-500">Quản lý Cụm sân, Khung giờ vàng (17h-21h), Biểu đồ Doanh thu & Quét vé QR Check-in</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="switchTab('analytics')" id="tabBtn-analytics" class="px-4 py-2 rounded-xl text-sm font-semibold bg-teal-600 text-white">📊 Thống kê & Biểu đồ</button>
+        <button onclick="switchTab('courts')" id="tabBtn-courts" class="px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">🏟️ Quản lý Cụm sân (CRUD)</button>
+        <button onclick="switchTab('bookings')" id="tabBtn-bookings" class="px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">📅 Duyệt Ca & Đơn đặt</button>
+        <button onclick="switchTab('qrcheckin')" id="tabBtn-qrcheckin" class="px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">📷 Quét QR Check-in</button>
+        <button onclick="logoutAdmin()" class="px-3 py-2 rounded-xl text-xs font-semibold text-red-600 hover:bg-red-50">Đăng xuất</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+    <!-- Toast thông báo -->
+    <div id="toastBox" class="fixed bottom-5 right-5 z-50 hidden bg-slate-900 text-white px-5 py-3 rounded-xl shadow-xl text-sm font-medium"></div>
+
+    <!-- TAB 1: THỐNG KÊ & BIỂU ĐỒ -->
+    <section id="tab-analytics" class="space-y-6">
+      <!-- KPI Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase">Tổng Doanh Thu</div>
+          <div id="kpiRevenue" class="text-2xl font-extrabold text-teal-600 mt-1">0 VNĐ</div>
+          <div id="kpiDeposit" class="text-xs text-slate-500 mt-1">Đã thu cọc: 0 VNĐ</div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase">Tỷ Lệ Lấp Đầy Sân (Occupancy Rate)</div>
+          <div id="kpiOccupancy" class="text-2xl font-extrabold text-amber-600 mt-1">0%</div>
+          <div class="w-full bg-slate-100 h-2 rounded-full mt-2 overflow-hidden">
+            <div id="kpiOccupancyBar" class="bg-amber-500 h-full rounded-full" style="width: 45%"></div>
+          </div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase">Tổng Lượt Đặt Sân</div>
+          <div id="kpiBookings" class="text-2xl font-extrabold text-indigo-600 mt-1">0</div>
+          <div id="kpiBookingsSub" class="text-xs text-slate-500 mt-1">Xác nhận: 0 • Đã hủy: 0</div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase">Hệ Sinh Thái Cộng Đồng</div>
+          <div id="kpiCommunity" class="text-2xl font-extrabold text-rose-600 mt-1">0 sân • 0 kèo</div>
+          <div id="kpiUsers" class="text-xs text-slate-500 mt-1">Thành viên: 0 tay vợt</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm lg:col-span-2">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-base font-bold text-slate-900">Biểu đồ Doanh thu Đặt sân (7 ngày gần nhất)</h3>
+              <p class="text-xs text-slate-500">Tự động cập nhật khi khách thanh toán cọc VNPay/MoMo hoặc Check-in</p>
+            </div>
+            <button onclick="loadAnalytics()" class="text-xs font-semibold text-teal-600 hover:underline">🔄 Làm mới</button>
+          </div>
+          <canvas id="revenueChart" height="115"></canvas>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <h3 class="text-base font-bold text-slate-900 mb-1">Top Khung Giờ Đặt Nhiều Nhất</h3>
+          <p class="text-xs text-slate-500 mb-4">Tập trung khung giờ vàng (Peak hours: 17h - 21h)</p>
+          <canvas id="slotsChart" height="220"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: QUẢN LÝ CỤM SÂN & GIÁ GIỜ VÀNG (CRUD) -->
+    <section id="tab-courts" class="space-y-6 hidden">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 id="courtFormTitle" class="text-base font-bold text-slate-900">Thêm Mới / Cập Nhật Cụm Sân & Khung Giờ Vàng</h3>
+            <p class="text-xs text-slate-500">Điều chỉnh giá cơ bản và giá khung giờ vàng (Peak hours: 17:00 - 21:00)</p>
+          </div>
+          <button onclick="resetCourtForm()" class="text-xs font-semibold text-slate-500 hover:text-slate-800">Xóa trắng form</button>
+        </div>
+
+        <input type="hidden" id="editCourtId" value="" />
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Tên cụm sân *</label>
+            <input id="courtName" type="text" placeholder="VD: Sân Cầu Lông Cầu Giấy Arena" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Quận / Huyện *</label>
+            <input id="courtDistrict" type="text" placeholder="Cầu Giấy, Đống Đa, Thanh Xuân..." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm" />
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Địa chỉ chi tiết *</label>
+            <input id="courtAddress" type="text" placeholder="Số 120 Trần Quý Kiên, Cầu Giấy, Hà Nội" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Giá giờ thường (VNĐ/giờ)</label>
+            <input id="courtRate" type="number" value="90000" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-amber-700 mb-1">Giá Giờ Vàng 17h-21h (VNĐ/giờ)</label>
+            <input id="courtPeakRate" type="number" value="130000" class="w-full px-3.5 py-2 rounded-xl border border-amber-300 bg-amber-50/40 text-sm font-semibold" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Loại thảm sân</label>
+            <select id="courtCarpet" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm">
+              <option value="Thảm PVC">Thảm PVC tiêu chuẩn</option>
+              <option value="Thảm Yonex">Thảm Yonex BWF</option>
+              <option value="Thảm Enlio">Thảm Enlio cao cấp</option>
+              <option value="Sàn gỗ">Sàn gỗ thể thao</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Loại sân & Số sân con</label>
+            <div class="flex gap-2">
+              <select id="courtType" class="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-sm">
+                <option value="indoor">Trong nhà</option>
+                <option value="outdoor">Ngoài trời</option>
+              </select>
+              <input id="courtSubCount" type="number" value="4" min="1" max="12" title="Số lượng sân con" class="w-20 px-3 py-2 rounded-xl border border-slate-200 text-sm" />
+            </div>
+          </div>
+        </div>
+        <div class="mt-4 flex justify-end gap-3">
+          <button onclick="saveCourt()" class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition shadow">
+            💾 Lưu Cụm Sân
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+          <h3 class="text-base font-bold text-slate-900">Danh Sách Cụm Sân Hiện Có</h3>
+          <span id="courtsTotalBadge" class="text-xs font-semibold bg-slate-100 px-3 py-1 rounded-full">0 cụm sân</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 text-slate-500 text-xs uppercase">
+                <th class="p-4">Cụm sân</th>
+                <th class="p-4">Quận/Huyện</th>
+                <th class="p-4">Loại thảm / Sân</th>
+                <th class="p-4">Giá thường</th>
+                <th class="p-4">Giá Giờ Vàng (17h-21h)</th>
+                <th class="p-4">Sân con</th>
+                <th class="p-4 text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="courtsTableBody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: DUYỆT CA & QUẢN LÝ ĐƠN ĐẶT SÂN -->
+    <section id="tab-bookings" class="space-y-6 hidden">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Quản Lý Đơn Đặt Sân & Duyệt Ca</h3>
+            <p class="text-xs text-slate-500">Theo dõi trạng thái giữ chỗ 5 phút (Vàng), đã đặt cọc (Đỏ) và hoàn tất check-in</p>
+          </div>
+          <button onclick="loadAnalytics()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-semibold">🔄 Tải lại</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 text-slate-500 text-xs uppercase">
+                <th class="p-4">Mã Đơn / QR</th>
+                <th class="p-4">Khách hàng</th>
+                <th class="p-4">Sân & Khung giờ</th>
+                <th class="p-4">Tổng tiền / Cọc</th>
+                <th class="p-4">Thanh toán</th>
+                <th class="p-4">Trạng thái</th>
+                <th class="p-4 text-right">Duyệt nhanh</th>
+              </tr>
+            </thead>
+            <tbody id="bookingsTableBody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: QUÉT MÃ QR CHECK-IN VÉ ĐIỆN TỬ -->
+    <section id="tab-qrcheckin" class="space-y-6 hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <h3 class="text-base font-bold text-slate-900 mb-1">📷 Quét Mã QR Check-in Bằng Camera / Webcam</h3>
+          <p class="text-xs text-slate-500 mb-4">Đưa mã QR trên màn hình điện thoại của khách vào vùng camera hoặc chọn ảnh chứa mã QR</p>
+          <div id="qr-reader" class="w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-50" style="min-height: 260px;"></div>
+          <div class="mt-4 flex gap-3">
+            <button onclick="startQrScanner()" class="flex-1 bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold py-2.5 rounded-xl">Bật Webcam Quét QR</button>
+            <button onclick="stopQrScanner()" class="px-4 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-semibold py-2.5 rounded-xl">Tắt Camera</button>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 mb-1">⚡ Kiểm Tra & Check-in Nhanh Bằng Mã Vé</h3>
+            <p class="text-xs text-slate-500 mb-4">Nhập hoặc dán chuỗi QR (`BBQR|BB-20261104-XXXX|...`) hoặc mã đặt sân để xác thực vé tức thì</p>
+
+            <div class="flex gap-2 mb-4">
+              <input id="manualQrInput" type="text" placeholder="VD: BB-20261104-1001 hoặc BBQR|..." class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-mono" />
+              <button onclick="submitQrCheckin()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl text-sm">
+                Xác nhận Check-in
+              </button>
+            </div>
+
+            <div id="checkinResultBox" class="hidden p-4 rounded-xl border text-sm"></div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-slate-100">
+            <div class="text-xs font-semibold text-slate-500 mb-2">Danh sách mã vé đã xác nhận gần đây (Bấm để điền thử nghiệm):</div>
+            <div id="sampleQrCodes" class="flex flex-wrap gap-2"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let adminToken = localStorage.getItem('bc_admin_token') || '';
+    let revenueChartInstance = null;
+    let slotsChartInstance = null;
+    let html5QrScanner = null;
+    let cachedCourts = [];
+
+    function showToast(msg) {
+      const box = document.getElementById('toastBox');
+      box.textContent = msg;
+      box.classList.remove('hidden');
+      setTimeout(() => box.classList.add('hidden'), 3500);
+    }
+
+    function switchTab(tabName) {
+      ['analytics', 'courts', 'bookings', 'qrcheckin'].forEach((t) => {
+        document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tabName);
+        const btn = document.getElementById(`tabBtn-${t}`);
+        if (t === tabName) {
+          btn.className = 'px-4 py-2 rounded-xl text-sm font-semibold bg-teal-600 text-white';
+        } else {
+          btn.className = 'px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200';
+        }
+      });
+      if (tabName === 'courts') loadCourts();
+      if (tabName === 'analytics' || tabName === 'bookings' || tabName === 'qrcheckin') loadAnalytics();
+    }
+
+    async function handleAdminLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+      const errEl = document.getElementById('loginError');
+      errEl.classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+        if (!data.success) {
+          errEl.textContent = data.message || 'Đăng nhập thất bại';
+          errEl.classList.remove('hidden');
+          return;
+        }
+        adminToken = data.token;
+        localStorage.setItem('bc_admin_token', adminToken);
+        document.getElementById('loginModal').classList.add('hidden');
+        showToast('Xin chào ' + data.user.full_name + '!');
+        loadAnalytics();
+        loadCourts();
+      } catch (e) {
+        errEl.textContent = 'Lỗi kết nối tới server';
+        errEl.classList.remove('hidden');
+      }
+    }
+
+    function logoutAdmin() {
+      adminToken = '';
+      localStorage.removeItem('bc_admin_token');
+      document.getElementById('loginModal').classList.remove('hidden');
+    }
+
+    async function loadAnalytics() {
+      if (!adminToken) {
+        document.getElementById('loginModal').classList.remove('hidden');
+        return;
+      }
+      try {
+        const res = await fetch('/api/admin/analytics', {
+          headers: { Authorization: `Bearer ${adminToken}` },
+        });
+        if (res.status === 401 || res.status === 403) {
+          document.getElementById('loginModal').classList.remove('hidden');
+          return;
+        }
+        const data = await res.json();
+        if (!data.success) return;
+
+        const s = data.summary;
+        document.getElementById('kpiRevenue').textContent = (s.total_revenue || 0).toLocaleString('vi-VN') + ' VNĐ';
+        document.getElementById('kpiDeposit').textContent = 'Đã thu cọc: ' + (s.total_deposit || 0).toLocaleString('vi-VN') + ' VNĐ';
+        document.getElementById('kpiOccupancy').textContent = (s.occupancy_rate || 0) + '%';
+        document.getElementById('kpiOccupancyBar').style.width = Math.min(100, s.occupancy_rate || 35) + '%';
+        document.getElementById('kpiBookings').textContent = s.total_bookings || 0;
+        document.getElementById('kpiBookingsSub').textContent = `Hợp lệ: ${s.confirmed_bookings} • Đã hủy: ${s.cancelled_bookings}`;
+        document.getElementById('kpiCommunity').textContent = `${s.total_courts} cụm sân • ${s.total_matches} kèo`;
+        document.getElementById('kpiUsers').textContent = `Thành viên đăng ký: ${s.total_users} tay vợt`;
+
+        renderCharts(data.revenue_by_day || [], data.top_time_slots || []);
+        renderBookingsTable(data.recent_bookings || []);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function renderCharts(revenueByDay, topSlots) {
+      const revCtx = document.getElementById('revenueChart').getContext('2d');
+      if (revenueChartInstance) revenueChartInstance.destroy();
+      revenueChartInstance = new Chart(revCtx, {
+        type: 'bar',
+        data: {
+          labels: revenueByDay.map((d) => d.date),
+          datasets: [
+            {
+              label: 'Doanh thu (VNĐ)',
+              data: revenueByDay.map((d) => d.revenue),
+              backgroundColor: 'rgba(13, 148, 136, 0.8)',
+              borderRadius: 8,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+        },
+      });
+
+      const slotCtx = document.getElementById('slotsChart').getContext('2d');
+      if (slotsChartInstance) slotsChartInstance.destroy();
+      slotsChartInstance = new Chart(slotCtx, {
+        type: 'doughnut',
+        data: {
+          labels: topSlots.length ? topSlots.map((s) => s.hour) : ['18:00 - 19:00', '19:00 - 20:00', '17:00 - 18:00'],
+          datasets: [
+            {
+              data: topSlots.length ? topSlots.map((s) => s.count) : [5, 4, 3],
+              backgroundColor: ['#0d9488', '#f59e0b', '#6366f1', '#ec4899', '#10b981', '#3b82f6'],
+            },
+          ],
+        },
+      });
+    }
+
+    function renderBookingsTable(bookings) {
+      const tbody = document.getElementById('bookingsTableBody');
+      const sampleBox = document.getElementById('sampleQrCodes');
+      sampleBox.innerHTML = '';
+
+      tbody.innerHTML = bookings
+        .map((b) => {
+          const statusBadge =
+            b.status === 'confirmed'
+              ? '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-200">Đã đặt cọc (Đỏ)</span>'
+              : b.status === 'locked_pending'
+              ? '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">Đang giữ chỗ 5p (Vàng)</span>'
+              : b.status === 'completed'
+              ? '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Đã Check-in ✓</span>'
+              : '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-500">Đã hủy</span>';
+
+          if (b.status === 'confirmed' || b.status === 'completed') {
+            const btn = document.createElement('button');
+            btn.className = 'px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-mono font-semibold';
+            btn.textContent = b.qr_checkin_code || b.booking_code;
+            btn.onclick = () => {
+              document.getElementById('manualQrInput').value = b.qr_checkin_code || b.booking_code;
+            };
+            sampleBox.appendChild(btn);
+          }
+
+          return `
+            <tr class="hover:bg-slate-50/80">
+              <td class="p-4">
+                <div class="font-mono font-bold text-slate-900">${b.booking_code}</div>
+                <div class="text-xs text-slate-400 font-mono">${b.qr_checkin_code || 'Chưa sinh QR'}</div>
+              </td>
+              <td class="p-4">
+                <div class="font-semibold text-slate-800">${b.user_id?.full_name || 'Khách đặt sân'}</div>
+                <div class="text-xs text-slate-500">${b.user_id?.phone || b.user_id?.email || ''}</div>
+              </td>
+              <td class="p-4">
+                <div class="font-semibold text-teal-700">${b.court_id?.name || 'Cụm sân'} (${b.sub_court_name})</div>
+                <div class="text-xs text-slate-500">${b.booking_date} • ${b.start_time} - ${b.end_time}</div>
+              </td>
+              <td class="p-4">
+                <div class="font-bold">${(b.total_amount || 0).toLocaleString('vi-VN')}đ</div>
+                <div class="text-xs text-teal-600">Cọc: ${(b.deposit_paid || 0).toLocaleString('vi-VN')}đ</div>
+              </td>
+              <td class="p-4">
+                <span class="px-2 py-0.5 bg-slate-100 rounded text-xs font-semibold">${b.payment_info?.payment_method || 'VNPAY'}</span>
+              </td>
+              <td class="p-4">${statusBadge}</td>
+              <td class="p-4 text-right space-x-1">
+                <button onclick="changeBookingStatus('${b._id}', 'completed')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold">Check-in</button>
+                <button onclick="changeBookingStatus('${b._id}', 'cancelled')" class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-xs font-semibold">Hủy</button>
+              </td>
+            </tr>
+          `;
+        })
+        .join('');
+    }
+
+    async function changeBookingStatus(id, status) {
+      const res = await fetch(`/api/admin/bookings/${id}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify({ status }),
+      });
+      const data = await res.json();
+      showToast(data.message || 'Đã cập nhật');
+      loadAnalytics();
+    }
+
+    async function loadCourts() {
+      const res = await fetch('/api/courts');
+      const data = await res.json();
+      cachedCourts = data.courts || [];
+      document.getElementById('courtsTotalBadge').textContent = `${cachedCourts.length} cụm sân`;
+
+      const tbody = document.getElementById('courtsTableBody');
+      tbody.innerHTML = cachedCourts
+        .map(
+          (c) => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-4">
+            <div class="font-bold text-slate-900">${c.name}</div>
+            <div class="text-xs text-slate-500">${c.address}</div>
+          </td>
+          <td class="p-4 font-medium">${c.district}</td>
+          <td class="p-4">
+            <span class="px-2 py-0.5 bg-teal-50 text-teal-700 rounded text-xs font-semibold">${c.carpet_type}</span>
+            <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-xs ml-1">${c.court_type === 'indoor' ? 'Trong nhà' : 'Ngoài trời'}</span>
+          </td>
+          <td class="p-4 font-semibold">${(c.hourly_rate || 0).toLocaleString('vi-VN')}đ/h</td>
+          <td class="p-4 font-bold text-amber-600">${(c.peak_hour_rate || c.hourly_rate).toLocaleString('vi-VN')}đ/h</td>
+          <td class="p-4">${(c.sub_courts || []).length} sân</td>
+          <td class="p-4 text-right space-x-1">
+            <button onclick="editCourt('${c._id}')" class="px-3 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-semibold">Sửa giá / Sân</button>
+            <button onclick="deleteCourt('${c._id}')" class="px-3 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-xs font-semibold">Xóa</button>
+          </td>
+        </tr>
+      `
+        )
+        .join('');
+    }
+
+    function editCourt(id) {
+      const c = cachedCourts.find((item) => item._id === id);
+      if (!c) return;
+      document.getElementById('editCourtId').value = c._id;
+      document.getElementById('courtName').value = c.name;
+      document.getElementById('courtDistrict').value = c.district;
+      document.getElementById('courtAddress').value = c.address;
+      document.getElementById('courtRate').value = c.hourly_rate;
+      document.getElementById('courtPeakRate').value = c.peak_hour_rate || c.hourly_rate;
+      document.getElementById('courtCarpet').value = c.carpet_type || 'Thảm PVC';
+      document.getElementById('courtType').value = c.court_type || 'indoor';
+      document.getElementById('courtSubCount').value = (c.sub_courts || []).length || 4;
+      document.getElementById('courtFormTitle').textContent = 'Đang Chỉnh Sửa: ' + c.name;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetCourtForm() {
+      document.getElementById('editCourtId').value = '';
+      document.getElementById('courtName').value = '';
+      document.getElementById('courtDistrict').value = '';
+      document.getElementById('courtAddress').value = '';
+      document.getElementById('courtRate').value = 90000;
+      document.getElementById('courtPeakRate').value = 130000;
+      document.getElementById('courtFormTitle').textContent = 'Thêm Mới / Cập Nhật Cụm Sân & Khung Giờ Vàng';
+    }
+
+    async function saveCourt() {
+      const id = document.getElementById('editCourtId').value;
+      const payload = {
+        name: document.getElementById('courtName').value.trim(),
+        district: document.getElementById('courtDistrict').value.trim(),
+        address: document.getElementById('courtAddress').value.trim(),
+        hourly_rate: Number(document.getElementById('courtRate').value),
+        peak_hour_rate: Number(document.getElementById('courtPeakRate').value),
+        carpet_type: document.getElementById('courtCarpet').value,
+        court_type: document.getElementById('courtType').value,
+        sub_courts_count: Number(document.getElementById('courtSubCount').value),
+      };
+
+      if (!payload.name || !payload.address) {
+        alert('Vui lòng nhập Tên cụm sân và Địa chỉ!');
+        return;
+      }
+
+      const url = id ? `/api/courts/${id}` : '/api/courts';
+      const method = id ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.message);
+        resetCourtForm();
+        loadCourts();
+      } else {
+        alert(data.message || 'Có lỗi xảy ra');
+      }
+    }
+
+    async function deleteCourt(id) {
+      if (!confirm('Bạn có chắc chắn muốn xóa cụm sân này?')) return;
+      const res = await fetch(`/api/courts/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${adminToken}` },
+      });
+      const data = await res.json();
+      showToast(data.message || 'Đã xóa sân');
+      loadCourts();
+    }
+
+    async function submitQrCheckin(codeOverride) {
+      const qr_code = codeOverride || document.getElementById('manualQrInput').value.trim();
+      const box = document.getElementById('checkinResultBox');
+      if (!qr_code) return;
+
+      const res = await fetch('/api/admin/checkin-qr', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify({ qr_code }),
+      });
+      const data = await res.json();
+      box.classList.remove('hidden');
+      if (data.success) {
+        box.className = 'p-4 rounded-xl border bg-emerald-50 border-emerald-200 text-emerald-900 text-sm';
+        box.innerHTML = `
+          <div class="font-bold text-base mb-1">✅ ${data.message}</div>
+          <div>Mã đặt sân: <b>${data.booking.booking_code}</b> • Sân: <b>${data.booking.court_id?.name || ''} (${data.booking.sub_court_name})</b></div>
+          <div>Thời gian Check-in: <b>${new Date(data.booking.checked_in_at).toLocaleString('vi-VN')}</b></div>
+        `;
+        loadAnalytics();
+      } else {
+        box.className = 'p-4 rounded-xl border bg-rose-50 border-rose-200 text-rose-800 text-sm';
+        box.innerHTML = `<div class="font-bold">❌ ${data.message}</div>`;
+      }
+    }
+
+    function startQrScanner() {
+      if (html5QrScanner) return;
+      html5QrScanner = new Html5Qrcode('qr-reader');
+      html5QrScanner
+        .start(
+          { facingMode: 'environment' },
+          { fps: 10, qrbox: { width: 220, height: 220 } },
+          (decodedText) => {
+            document.getElementById('manualQrInput').value = decodedText;
+            submitQrCheckin(decodedText);
+            stopQrScanner();
+          },
+          () => {}
+        )
+        .catch((err) => {
+          alert('Không tìm thấy Webcam trên thiết bị hoặc chưa cấp quyền Camera. Bạn có thể dùng ô Nhập mã QR bên phải để test!');
+          html5QrScanner = null;
+        });
+    }
+
+    function stopQrScanner() {
+      if (html5QrScanner) {
+        html5QrScanner.stop().then(() => {
+          html5QrScanner.clear();
+          html5QrScanner = null;
+        });
+      }
+    }
+
+    // Kết nối Socket.io để tự động cập nhật Dashboard khi khách đặt sân trên Mobile
+    const socket = io();
+    socket.on('slot_status_changed', (payload) => {
+      showToast(`⚡ Real-time: Khung giờ ${payload.start_time} vừa chuyển sang [${payload.status.toUpperCase()}]`);
+      if (adminToken) loadAnalytics();
+    });
+    socket.on('booking_confirmed', (payload) => {
+      showToast(`🎉 Đơn đặt sân ${payload.booking_code} vừa thanh toán thành công!`);
+      if (adminToken) loadAnalytics();
+    });
+
+    // Tự động đăng nhập hoặc tải dữ liệu khi mở trang
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!adminToken) {
+        handleAdminLogin();
+      } else {
+        loadAnalytics();
+      }
+    });
+  </script>
+</body>
+</html>
+
