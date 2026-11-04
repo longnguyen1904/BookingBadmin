@@ -7,10 +7,10 @@
     "dev": "concurrently -n \"BACKEND,MOBILE\" -c \"cyan,green\" \"npm run start --prefix backend\" \"npm run start --prefix mobile\"",
     "backend": "npm run start --prefix backend",
     "mobile": "npm run start --prefix mobile",
+    "mobile:tunnel": "npm run tunnel --prefix mobile",
     "seed": "npm run seed --prefix backend"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
   }
 }
-

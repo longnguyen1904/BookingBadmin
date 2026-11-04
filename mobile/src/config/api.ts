@@ -3,12 +3,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { io, Socket } from 'socket.io-client';
 
 // Tự động nhận diện địa chỉ Backend:
-// - Trên Web / iOS Simulator: http://localhost:5000
-// - Trên Máy ảo Android (Android Studio Emulator): http://10.0.2.2:5000 (hoặc LAN IP 10.33.90.116:5000)
+// - Trên Web: http://localhost:5000
+// - Trên Thiết bị thật qua Expo Go / Máy ảo Android: http://192.168.100.102:5000 (LAN IP máy tính)
 const DEFAULT_BASE_URL =
   Platform.OS === 'web'
     ? 'http://localhost:5000'
-    : 'http://10.33.90.116:5000';
+    : 'http://192.168.100.102:5000';
 
 let currentBaseUrl = DEFAULT_BASE_URL;
 let socketInstance: Socket | null = null;
@@ -69,8 +69,12 @@ export async function apiRequest<T = any>(
     const data = await response.json();
     return data as T;
   } catch (error: any) {
-    // Fallback thử sang 10.0.2.2:5000 hoặc localhost:5000 nếu kết nối LAN gặp sự cố trên máy ảo
-    const fallbackUrls = ['http://10.0.2.2:5000', 'http://localhost:5000'];
+    // Fallback thử sang IP LAN hiện tại, máy ảo 10.0.2.2 hoặc localhost
+    const fallbackUrls = [
+      'http://192.168.100.102:5000',
+      'http://10.0.2.2:5000',
+      'http://localhost:5000',
+    ];
     for (const fb of fallbackUrls) {
       if (fb === currentBaseUrl) continue;
       try {
@@ -85,4 +89,3 @@ export async function apiRequest<T = any>(
     );
   }
 }
-
