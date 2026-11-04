@@ -1,10 +1,10 @@
 [
   {
-    "_id": "6aeae7c2ec641c6f1a9f2f93",
+    "_id": "6aeb240677ca47c73f814d34",
     "booking_code": "BB-20261104-1001",
-    "user_id": "6aeae7c1ec641c6f1a9f2f46",
-    "court_id": "6aeae7c1ec641c6f1a9f2f5b",
-    "sub_court_id": "6aeae7c1ec641c6f1a9f2f4b",
+    "user_id": "6aeb240577ca47c73f814ce7",
+    "court_id": "6aeb240577ca47c73f814cfc",
+    "sub_court_id": "6aeb240577ca47c73f814cec",
     "sub_court_name": "Sân 1",
     "booking_date": "2026-11-04",
     "start_time": "18:00",
@@ -14,8 +14,8 @@
       "19:00"
     ],
     "slot_ids": [
-      "6aeae7c29e958980a9b45799",
-      "6aeae7c29e958980a9b4579a"
+      "6aeb23fe1d126d0f35d196aa",
+      "6aeb23fe1d126d0f35d196ab"
     ],
     "extra_services": [
       {
@@ -23,14 +23,14 @@
         "name": "Nước suối Aquafina 500ml",
         "quantity": 4,
         "price": 10000,
-        "_id": "6aeae7c2ec641c6f1a9f2f94"
+        "_id": "6aeb240677ca47c73f814d35"
       },
       {
         "service_id": "shuttlecock_tube",
         "name": "Ống cầu lông Hải Yến S90",
         "quantity": 1,
         "price": 220000,
-        "_id": "6aeae7c2ec641c6f1a9f2f95"
+        "_id": "6aeb240677ca47c73f814d36"
       }
     ],
     "court_fee": 260000,
@@ -42,23 +42,23 @@
     "payment_info": {
       "transaction_id": "VNP14589201",
       "payment_method": "VNPAY",
-      "pay_time": "2026-11-04T08:07:30.337Z"
+      "pay_time": "2026-11-04T12:24:38.345Z"
     },
     "qr_checkin_code": "BBQR|BB-20261104-1001|DEMO",
     "checked_in_at": null,
     "cancel_reason": "",
     "penalty_amount": 0,
     "is_reviewed": false,
-    "created_at": "2026-11-04T08:07:30.342Z",
-    "updated_at": "2026-11-04T08:07:30.342Z",
+    "created_at": "2026-11-04T12:24:38.349Z",
+    "updated_at": "2026-11-04T12:24:38.349Z",
     "__v": 0
   },
   {
-    "_id": "6aeae7c2ec641c6f1a9f2f99",
+    "_id": "6aeb240677ca47c73f814d3a",
     "booking_code": "BB-20261104-1002",
-    "user_id": "6aeae7c1ec641c6f1a9f2f47",
-    "court_id": "6aeae7c1ec641c6f1a9f2f5b",
-    "sub_court_id": "6aeae7c1ec641c6f1a9f2f4c",
+    "user_id": "6aeb240577ca47c73f814ce8",
+    "court_id": "6aeb240577ca47c73f814cfc",
+    "sub_court_id": "6aeb240577ca47c73f814ced",
     "sub_court_name": "Sân 2",
     "booking_date": "2026-11-04",
     "start_time": "19:00",
@@ -68,8 +68,8 @@
       "20:00"
     ],
     "slot_ids": [
-      "6aeae7c29e958980a9b457ac",
-      "6aeae7c29e958980a9b457ad"
+      "6aeb23fe1d126d0f35d196bd",
+      "6aeb23fe1d126d0f35d196be"
     ],
     "extra_services": [
       {
@@ -77,7 +77,7 @@
         "name": "Thuê vợt cầu lông Yonex",
         "quantity": 2,
         "price": 35000,
-        "_id": "6aeae7c2ec641c6f1a9f2f9a"
+        "_id": "6aeb240677ca47c73f814d3b"
       }
     ],
     "court_fee": 260000,
@@ -89,23 +89,23 @@
     "payment_info": {
       "transaction_id": "MOMO9988123",
       "payment_method": "MOMO",
-      "pay_time": "2026-11-04T08:07:30.352Z"
+      "pay_time": "2026-11-04T12:24:38.448Z"
     },
     "qr_checkin_code": "BBQR|BB-20261104-1002|DEMO",
-    "checked_in_at": "2026-11-04T08:07:30.352Z",
+    "checked_in_at": "2026-11-04T12:24:38.448Z",
     "cancel_reason": "",
     "penalty_amount": 0,
     "is_reviewed": false,
-    "created_at": "2026-11-04T08:07:30.353Z",
-    "updated_at": "2026-11-04T08:07:30.353Z",
+    "created_at": "2026-11-04T12:24:38.449Z",
+    "updated_at": "2026-11-04T12:24:38.449Z",
     "__v": 0
   },
   {
-    "_id": "6aeae7c2ec641c6f1a9f2f9d",
+    "_id": "6aeb240677ca47c73f814d3e",
     "booking_code": "BB-20261104-0988",
-    "user_id": "6aeae7c1ec641c6f1a9f2f46",
-    "court_id": "6aeae7c1ec641c6f1a9f2f66",
-    "sub_court_id": "6aeae7c1ec641c6f1a9f2f4f",
+    "user_id": "6aeb240577ca47c73f814ce7",
+    "court_id": "6aeb240577ca47c73f814d07",
+    "sub_court_id": "6aeb240577ca47c73f814cf0",
     "sub_court_name": "Sân 1",
     "booking_date": "2026-11-04",
     "start_time": "06:00",
@@ -124,16 +124,16 @@
     "payment_info": {
       "transaction_id": "VNP14500112",
       "payment_method": "VNPAY",
-      "pay_time": "2026-11-04T03:07:30.355Z"
+      "pay_time": "2026-11-04T07:24:38.515Z"
     },
     "qr_checkin_code": "BBQR|BB-20261104-0988|DEMO",
-    "checked_in_at": "2026-11-04T05:07:30.355Z",
+    "checked_in_at": "2026-11-04T09:24:38.515Z",
     "cancel_reason": "",
     "penalty_amount": 0,
     "is_reviewed": false,
     "extra_services": [],
-    "created_at": "2026-11-04T08:07:30.356Z",
-    "updated_at": "2026-11-04T08:07:30.356Z",
+    "created_at": "2026-11-04T12:24:38.517Z",
+    "updated_at": "2026-11-04T12:24:38.517Z",
     "__v": 0
   }
 ]

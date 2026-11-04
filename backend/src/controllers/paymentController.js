@@ -367,15 +367,22 @@ const vnpayReturn = async (req, res) => {
     }
   </div>
   <script>
+    const resultData = JSON.stringify({
+      type: 'PAYMENT_RESULT',
+      success: ${isSuccess},
+      booking_id: '${booking?._id || ''}',
+      booking_code: '${booking?.booking_code || ''}',
+      qr_checkin_code: '${booking?.qr_checkin_code || ''}',
+      vnp_ResponseCode: '${responseCode}'
+    });
     if (window.ReactNativeWebView) {
-      window.ReactNativeWebView.postMessage(JSON.stringify({
-        type: 'PAYMENT_RESULT',
-        success: ${isSuccess},
-        booking_id: '${booking?._id || ''}',
-        booking_code: '${booking?.booking_code || ''}',
-        qr_checkin_code: '${booking?.qr_checkin_code || ''}',
-        vnp_ResponseCode: '${responseCode}'
-      }));
+      window.ReactNativeWebView.postMessage(resultData);
+    }
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage(resultData, '*');
+    }
+    if (window.opener) {
+      try { window.opener.postMessage(resultData, '*'); } catch (_) {}
     }
   </script>
 </body>

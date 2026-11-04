@@ -12,6 +12,7 @@ import { CheckoutPaymentScreen } from './src/screens/CheckoutPaymentScreen';
 import { MatchFeedScreen } from './src/screens/MatchFeedScreen';
 import { MatchChatRoomScreen } from './src/screens/MatchChatRoomScreen';
 import { BookingHistoryScreen } from './src/screens/BookingHistoryScreen';
+import { navigationRef } from './src/navigation/navigationRef';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -71,6 +72,26 @@ function MainTabsNavigator() {
           title: 'Hồ Sơ Tay Vợt & Tài Khoản',
           tabBarLabel: 'Tài Khoản',
           tabBarIcon: () => <Text style={{ fontSize: 18 }}>👤</Text>,
+        }}
+      />
+
+      {/* Đăng ký các màn hình con ẩn thanh Tab để navigate trực tiếp mượt mà */}
+      <Tab.Screen
+        name="CheckoutPayment"
+        component={CheckoutPaymentScreen}
+        options={{
+          title: 'Chi Tiết Đặt Sân & Thanh Toán Cọc',
+          tabBarButton: () => null,
+          tabBarItemStyle: { display: 'none' },
+        }}
+      />
+      <Tab.Screen
+        name="MatchChatRoom"
+        component={MatchChatRoomScreen}
+        options={{
+          title: 'Phòng Chat Trận Đấu (Real-time)',
+          tabBarButton: () => null,
+          tabBarItemStyle: { display: 'none' },
         }}
       />
     </Tab.Navigator>
@@ -142,11 +163,10 @@ function RootNavigator() {
 export default function App() {
   return (
     <AuthProvider>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <StatusBar style="light" />
         <RootNavigator />
       </NavigationContainer>
     </AuthProvider>
   );
 }
-

@@ -1,0 +1,16 @@
+{
+  "name": "badminton-booking-root",
+  "version": "1.0.0",
+  "description": "Hệ thống Đặt Sân Cầu Lông & Ghép Trận Giao Lưu (BadmintonConnect)",
+  "scripts": {
+    "start": "concurrently -n \"BACKEND,MOBILE\" -c \"cyan,green\" \"npm run start --prefix backend\" \"npm run start --prefix mobile\"",
+    "dev": "concurrently -n \"BACKEND,MOBILE\" -c \"cyan,green\" \"npm run start --prefix backend\" \"npm run start --prefix mobile\"",
+    "backend": "npm run start --prefix backend",
+    "mobile": "npm run start --prefix mobile",
+    "seed": "npm run seed --prefix backend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
+

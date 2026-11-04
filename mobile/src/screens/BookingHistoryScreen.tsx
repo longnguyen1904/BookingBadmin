@@ -10,7 +10,9 @@ import {
   Alert,
   ActivityIndicator,
   RefreshControl,
+  Image,
 } from 'react-native';
+import { BADMINTON_IMAGES } from '../constants/badmintonTheme';
 import QRCode from 'react-native-qrcode-svg';
 import { apiRequest } from '../config/api';
 import { Booking } from '../types/models';
@@ -202,40 +204,47 @@ export const BookingHistoryScreen: React.FC = () => {
 
             return (
               <View key={b._id} style={styles.bookingCard}>
-                <View style={styles.cardHeader}>
-                  <Text style={styles.bookingCode}>#{b.booking_code}</Text>
-                  <View
-                    style={[
-                      styles.statusPill,
-                      b.status === 'confirmed' && { backgroundColor: '#DCFCE7' },
-                      b.status === 'completed' && { backgroundColor: '#DBEAFE' },
-                      b.status === 'cancelled' && { backgroundColor: '#FEE2E2' },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.statusPillText,
-                        b.status === 'confirmed' && { color: '#15803D' },
-                        b.status === 'completed' && { color: '#1D4ED8' },
-                        b.status === 'cancelled' && { color: '#B91C1C' },
-                      ]}
-                    >
-                      {b.status === 'confirmed'
-                        ? 'Đã xác nhận • Sẵn sàng Check-in'
-                        : b.status === 'locked_pending'
-                        ? 'Đang chờ thanh toán (5p)'
-                        : b.status === 'completed'
-                        ? 'Đã hoàn thành trận đấu ✓'
-                        : 'Đã hủy'}
+                <View style={styles.cardHeaderTop}>
+                  <Image
+                    source={{ uri: b.court_id?.images?.[0] || BADMINTON_IMAGES.courtDefault1 }}
+                    style={styles.cardCourtThumb}
+                    resizeMode="cover"
+                  />
+                  <View style={{ flex: 1, marginLeft: 10 }}>
+                    <View style={styles.codePillRow}>
+                      <Text style={styles.bookingCode}>#{b.booking_code}</Text>
+                      <View
+                        style={[
+                          styles.statusPill,
+                          b.status === 'confirmed' && { backgroundColor: '#DCFCE7' },
+                          b.status === 'completed' && { backgroundColor: '#DBEAFE' },
+                          b.status === 'cancelled' && { backgroundColor: '#FEE2E2' },
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.statusPillText,
+                            b.status === 'confirmed' && { color: '#15803D' },
+                            b.status === 'completed' && { color: '#1D4ED8' },
+                            b.status === 'cancelled' && { color: '#B91C1C' },
+                          ]}
+                        >
+                          {b.status === 'confirmed'
+                            ? '✓ Đã xác nhận'
+                            : b.status === 'locked_pending'
+                            ? 'Chờ cọc (5p)'
+                            : b.status === 'completed'
+                            ? 'Đã hoàn thành ✓'
+                            : 'Đã hủy'}
+                        </Text>
+                      </View>
+                    </View>
+                    <Text style={styles.courtTitle} numberOfLines={1}>{courtName}</Text>
+                    <Text style={styles.courtSub}>
+                      🏸 {b.sub_court_name} • 📅 {b.booking_date} • ⏰ {b.start_time} - {b.end_time}
                     </Text>
                   </View>
                 </View>
-
-                <Text style={styles.courtTitle}>{courtName}</Text>
-                <Text style={styles.courtSub}>
-                  🏸 {b.sub_court_name} • 📅 {b.booking_date} • ⏰ {b.start_time} -{' '}
-                  {b.end_time}
-                </Text>
 
                 {b.extra_services && b.extra_services.length > 0 && (
                   <Text style={styles.extraServicesText}>
@@ -334,12 +343,22 @@ export const BookingHistoryScreen: React.FC = () => {
         <View style={styles.modalOverlay}>
           {qrTicketBooking && (
             <View style={styles.ticketModal}>
+              <View style={styles.ticketBannerWrap}>
+                <Image
+                  source={{ uri: BADMINTON_IMAGES.ticketHero }}
+                  style={styles.ticketBannerImg}
+                  resizeMode="cover"
+                />
+                <View style={styles.ticketBannerOverlay}>
+                  <Text style={styles.ticketBadgePill}>🎟️ VÉ CHECK-IN ĐIỆN TỬ VIP</Text>
+                  <Text style={styles.ticketBannerCourtName} numberOfLines={1}>
+                    {qrTicketBooking.court_id?.name || 'Sân Cầu Lông'}
+                  </Text>
+                </View>
+              </View>
               <View style={styles.ticketHeader}>
-                <Text style={styles.ticketHeaderTitle}>
-                  🎫 VÉ ĐẶT SÂN ĐIỆN TỬ Badminton Booking
-                </Text>
                 <Text style={styles.ticketHeaderSub}>
-                  Đưa mã QR này cho Chủ sân / Web Admin quét để Check-in
+                  Đưa mã QR này cho Nhân viên lễ tân / Web Admin quét khi vào sân
                 </Text>
               </View>
 
@@ -459,6 +478,63 @@ export const BookingHistoryScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  cardHeaderTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  cardCourtThumb: {
+    width: 64,
+    height: 64,
+    borderRadius: 12,
+    backgroundColor: '#E2E8F0',
+  },
+  codePillRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 2,
+  },
+  ticketBannerWrap: {
+    height: 100,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    overflow: 'hidden',
+    position: 'relative',
+    backgroundColor: '#0F172A',
+  },
+  ticketBannerImg: {
+    width: '100%',
+    height: '100%',
+    opacity: 0.75,
+  },
+  ticketBannerOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    padding: 12,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(15, 23, 42, 0.4)',
+  },
+  ticketBadgePill: {
+    backgroundColor: '#0D9488',
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '800',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+    alignSelf: 'flex-start',
+    marginBottom: 4,
+  },
+  ticketBannerCourtName: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '900',
+  },
+
   container: {
     flex: 1,
     backgroundColor: '#F1F5F9',

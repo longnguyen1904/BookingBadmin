@@ -10,7 +10,9 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
+import { BADMINTON_IMAGES } from '../constants/badmintonTheme';
 import { useAuth } from '../context/AuthContext';
 import { DominantHand, PreferredPlay, SkillLevel } from '../types/models';
 import { getBaseUrl, setBaseUrl } from '../config/api';
@@ -81,13 +83,41 @@ export const AuthScreen: React.FC = () => {
     return (
       <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
         <View style={styles.profileHeader}>
-          <View style={styles.avatarCircle}>
-            <Text style={styles.avatarText}>
-              {user.full_name.slice(0, 2).toUpperCase()}
-            </Text>
-          </View>
+          <Image
+            source={{ uri: user.avatar || BADMINTON_IMAGES.avatarMale1 }}
+            style={styles.profileAvatarImg}
+          />
           <Text style={styles.profileName}>{user.full_name}</Text>
           <Text style={styles.profileEmail}>{user.email}</Text>
+
+          <View style={styles.playerMetaBadges}>
+            <Text style={styles.playerBadge}>
+              🏸 {SKILL_OPTIONS.find((s) => s.value === (user.profile?.skill_level || skillLevel))?.label || 'Trung bình'}
+            </Text>
+            <Text style={styles.playerBadge}>
+              ✋ {HAND_OPTIONS.find((h) => h.value === (user.profile?.dominant_hand || dominantHand))?.label || 'Tay phải'}
+            </Text>
+            <Text style={styles.playerBadge}>
+              👥 {PLAY_OPTIONS.find((p) => p.value === (user.profile?.preferred_play || preferredPlay))?.label || 'Đánh đôi'}
+            </Text>
+          </View>
+
+          {/* Thống kê thành tích tay vợt */}
+          <View style={styles.statsCardRow}>
+            <View style={styles.statBox}>
+              <Text style={styles.statNum}>12</Text>
+              <Text style={styles.statLabel}>Trận đã chơi</Text>
+            </View>
+            <View style={styles.statBox}>
+              <Text style={styles.statNum}>4.9 ⭐</Text>
+              <Text style={styles.statLabel}>Đánh giá</Text>
+            </View>
+            <View style={styles.statBox}>
+              <Text style={styles.statNum}>100%</Text>
+              <Text style={styles.statLabel}>Uy tín</Text>
+            </View>
+          </View>
+
           <View style={styles.jwtBadge}>
             <Text style={styles.jwtBadgeText}>🔒 Phiên JWT Đang Hoạt Động (AsyncStorage)</Text>
           </View>
@@ -241,12 +271,19 @@ export const AuthScreen: React.FC = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.brandBanner}>
-          <Text style={styles.brandEmoji}>🏸</Text>
-          <Text style={styles.brandTitle}>Badminton Booking</Text>
-          <Text style={styles.brandSubtitle}>
-            Đặt sân cầu lông thời gian thực & Ghép trận giao lưu ngang trình độ
-          </Text>
+        <View style={styles.authHeroBanner}>
+          <Image
+            source={{ uri: BADMINTON_IMAGES.authHero }}
+            style={styles.authHeroImg}
+            resizeMode="cover"
+          />
+          <View style={styles.authHeroOverlay}>
+            <Text style={styles.authHeroBadge}>🏸 Badminton Connect</Text>
+            <Text style={styles.authHeroTitle}>Đam Mê Cầu Lông • Kết Nối Tay Vợt</Text>
+            <Text style={styles.authHeroSub}>
+              Đặt sân chuẩn BWF nhanh chóng • Ghép kèo sòng phẳng, vui vẻ
+            </Text>
+          </View>
         </View>
 
         <View style={styles.card}>
@@ -455,6 +492,132 @@ export const AuthScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  profileAvatarImg: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 3,
+    borderColor: '#0D9488',
+    marginBottom: 8,
+  },
+  playerMetaBadges: {
+    flexDirection: 'row',
+    gap: 6,
+    marginTop: 8,
+    marginBottom: 10,
+  },
+  playerBadge: {
+    backgroundColor: '#CCFBF1',
+    color: '#0F766E',
+    fontSize: 11,
+    fontWeight: '700',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  statsCardRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  statBox: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  statNum: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#0D9488',
+  },
+  statLabel: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 2,
+    fontWeight: '600',
+  },
+  authHeroBanner: {
+    height: 150,
+    borderRadius: 18,
+    overflow: 'hidden',
+    marginBottom: 14,
+    position: 'relative',
+    backgroundColor: '#0F172A',
+  },
+  authHeroImg: {
+    width: '100%',
+    height: '100%',
+    opacity: 0.72,
+  },
+  authHeroOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    padding: 14,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
+  },
+  authHeroBadge: {
+    backgroundColor: '#0D9488',
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '800',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+    alignSelf: 'flex-start',
+    marginBottom: 6,
+  },
+  authHeroTitle: {
+    fontSize: 17,
+    fontWeight: '900',
+    color: '#FFFFFF',
+  },
+  authHeroSub: {
+    fontSize: 11,
+    color: '#E2E8F0',
+    marginTop: 2,
+    fontWeight: '500',
+  },
+  quickTestBox: {
+    marginTop: 14,
+    padding: 10,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  quickTestTitle: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#475569',
+    marginBottom: 6,
+  },
+  quickTestRow: {
+    gap: 6,
+  },
+  quickTestBtn: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+  },
+  quickTestBtnText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#0F766E',
+  },
+
   container: {
     flex: 1,
     backgroundColor: '#F1F5F9',

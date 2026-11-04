@@ -1,9 +1,9 @@
 [
   {
-    "_id": "6aeae7c1ec641c6f1a9f2f45",
+    "_id": "6aeb240577ca47c73f814ce6",
     "full_name": "Quản Trị Hệ Thống (Admin)",
     "email": "admin@badmintonbooking.vn",
-    "password_hash": "$2a$10$4SG/yf1dzikaxUOd.zQtKuS31GtaW9YDspdNQ6jJXWLLkk67NdqJC",
+    "password_hash": "$2a$10$owf2lqDR.1z8WJrm3kf71.0aCdXkmtNUvYwWrHjGcz2H6tgaNMnLe",
     "phone": "0901234567",
     "avatar": "https://ui-avatars.com/api/?background=0f766e&color=fff&name=Admin",
     "role": "admin",
@@ -13,14 +13,14 @@
       "preferred_play": "double"
     },
     "__v": 0,
-    "created_at": "2026-11-04T08:07:29.955Z",
-    "updated_at": "2026-11-04T08:07:29.955Z"
+    "created_at": "2026-11-04T12:24:37.243Z",
+    "updated_at": "2026-11-04T12:24:37.243Z"
   },
   {
-    "_id": "6aeae7c1ec641c6f1a9f2f46",
+    "_id": "6aeb240577ca47c73f814ce7",
     "full_name": "Nguyễn Minh Quân",
     "email": "quan@gmail.com",
-    "password_hash": "$2a$10$4SG/yf1dzikaxUOd.zQtKuS31GtaW9YDspdNQ6jJXWLLkk67NdqJC",
+    "password_hash": "$2a$10$owf2lqDR.1z8WJrm3kf71.0aCdXkmtNUvYwWrHjGcz2H6tgaNMnLe",
     "phone": "0988112233",
     "avatar": "https://ui-avatars.com/api/?background=0284c7&color=fff&name=Minh+Quan",
     "role": "user",
@@ -30,14 +30,14 @@
       "preferred_play": "double"
     },
     "__v": 0,
-    "created_at": "2026-11-04T08:07:29.956Z",
-    "updated_at": "2026-11-04T08:07:29.956Z"
+    "created_at": "2026-11-04T12:24:37.243Z",
+    "updated_at": "2026-11-04T12:24:37.243Z"
   },
   {
-    "_id": "6aeae7c1ec641c6f1a9f2f47",
+    "_id": "6aeb240577ca47c73f814ce8",
     "full_name": "Trần Hoàng Nam",
     "email": "nam@gmail.com",
-    "password_hash": "$2a$10$4SG/yf1dzikaxUOd.zQtKuS31GtaW9YDspdNQ6jJXWLLkk67NdqJC",
+    "password_hash": "$2a$10$owf2lqDR.1z8WJrm3kf71.0aCdXkmtNUvYwWrHjGcz2H6tgaNMnLe",
     "phone": "0977334455",
     "avatar": "https://ui-avatars.com/api/?background=4f46e5&color=fff&name=Hoang+Nam",
     "role": "user",
@@ -47,14 +47,14 @@
       "preferred_play": "single"
     },
     "__v": 0,
-    "created_at": "2026-11-04T08:07:29.956Z",
-    "updated_at": "2026-11-04T08:07:29.956Z"
+    "created_at": "2026-11-04T12:24:37.243Z",
+    "updated_at": "2026-11-04T12:24:37.243Z"
   },
   {
-    "_id": "6aeae7c1ec641c6f1a9f2f48",
+    "_id": "6aeb240577ca47c73f814ce9",
     "full_name": "Lê Thu Hà",
     "email": "ha@gmail.com",
-    "password_hash": "$2a$10$4SG/yf1dzikaxUOd.zQtKuS31GtaW9YDspdNQ6jJXWLLkk67NdqJC",
+    "password_hash": "$2a$10$owf2lqDR.1z8WJrm3kf71.0aCdXkmtNUvYwWrHjGcz2H6tgaNMnLe",
     "phone": "0912556677",
     "avatar": "https://ui-avatars.com/api/?background=db2777&color=fff&name=Thu+Ha",
     "role": "user",
@@ -64,14 +64,14 @@
       "preferred_play": "double"
     },
     "__v": 0,
-    "created_at": "2026-11-04T08:07:29.956Z",
-    "updated_at": "2026-11-04T08:07:29.956Z"
+    "created_at": "2026-11-04T12:24:37.243Z",
+    "updated_at": "2026-11-04T12:24:37.243Z"
   },
   {
-    "_id": "6aeae7c1ec641c6f1a9f2f49",
+    "_id": "6aeb240577ca47c73f814cea",
     "full_name": "Phạm Đức Anh",
     "email": "ducanh@gmail.com",
-    "password_hash": "$2a$10$4SG/yf1dzikaxUOd.zQtKuS31GtaW9YDspdNQ6jJXWLLkk67NdqJC",
+    "password_hash": "$2a$10$owf2lqDR.1z8WJrm3kf71.0aCdXkmtNUvYwWrHjGcz2H6tgaNMnLe",
     "phone": "0933889900",
     "avatar": "https://ui-avatars.com/api/?background=d97706&color=fff&name=Duc+Anh",
     "role": "user",
@@ -81,7 +81,7 @@
       "preferred_play": "double"
     },
     "__v": 0,
-    "created_at": "2026-11-04T08:07:29.956Z",
-    "updated_at": "2026-11-04T08:07:29.956Z"
+    "created_at": "2026-11-04T12:24:37.243Z",
+    "updated_at": "2026-11-04T12:24:37.243Z"
   }
 ]

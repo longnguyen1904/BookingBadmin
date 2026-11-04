@@ -8,8 +8,11 @@ import {
   ActivityIndicator,
   Alert,
   RefreshControl,
+  Image,
 } from 'react-native';
+import { BADMINTON_IMAGES } from '../constants/badmintonTheme';
 import { useNavigation } from '@react-navigation/native';
+import { rootNavigate } from '../navigation/navigationRef';
 import { apiRequest, getSocket } from '../config/api';
 import { Court, SubCourt, TimeSlot } from '../types/models';
 
@@ -42,6 +45,19 @@ function getNext7Days(): { dateStr: string; dayLabel: string; dayNum: string }[]
   }
   return result;
 }
+
+const getCourtImage = (court: Court, index: number) => {
+  if (court.images && court.images.length > 0 && typeof court.images[0] === 'string' && court.images[0].startsWith('http')) {
+    return court.images[0];
+  }
+  const fallbacks = [
+    BADMINTON_IMAGES.courtDefault1,
+    BADMINTON_IMAGES.courtDefault2,
+    BADMINTON_IMAGES.courtDefault3,
+    BADMINTON_IMAGES.courtDefault4,
+  ];
+  return fallbacks[index % fallbacks.length];
+};
 
 export const CourtScheduleScreen: React.FC = () => {
   const navigation = useNavigation<any>();
@@ -232,11 +248,20 @@ export const CourtScheduleScreen: React.FC = () => {
       setSelectedSlotIds([]);
       fetchSlots();
 
-      navigation.navigate('CheckoutPayment', {
+      const paymentParams = {
         booking: res.booking,
         court: selectedCourt,
         lockExpiresAt: res.lock_expires_at,
-      });
+      };
+
+      // Đảm bảo chuyển màn hình thanh toán cọc tức thì
+      rootNavigate('CheckoutPayment', paymentParams);
+      try {
+        navigation.navigate('CheckoutPayment', paymentParams);
+      } catch (_) {}
+      try {
+        navigation.getParent()?.navigate('CheckoutPayment', paymentParams);
+      } catch (_) {}
     } catch (error: any) {
       setLocking(false);
       Alert.alert('Lỗi đặt sân', error.message);
@@ -258,6 +283,25 @@ export const CourtScheduleScreen: React.FC = () => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
+        {/* Banner Chào mừng & Không khí Cầu lông Gần gũi */}
+        <View style={styles.heroBannerWrap}>
+          <Image
+            source={{ uri: BADMINTON_IMAGES.heroBanner }}
+            style={styles.heroBannerImg}
+            resizeMode="cover"
+          />
+          <View style={styles.heroBannerOverlay}>
+            <View style={styles.heroTagRow}>
+              <Text style={styles.heroLivePill}>🟢 Đang hoạt động • Live Slots</Text>
+              <Text style={styles.heroBadgePill}>🏸 Chuẩn BWF</Text>
+            </View>
+            <Text style={styles.heroTitle}>Sân Cầu Lông Đẹp & Chuẩn Thi Đấu</Text>
+            <Text style={styles.heroSubtitle}>
+              Giữ chỗ 5 phút tức thì • Check-in vé QR • Thảm Yonex bám giày
+            </Text>
+          </View>
+        </View>
+
         {/* 1. Bộ lọc Quận/Huyện, Giá, Loại thảm, Trong nhà/Ngoài trời */}
         <View style={styles.filterSection}>
           <Text style={styles.filterTitle}>🔍 Bộ lọc cụm sân cầu lông</Text>
@@ -359,8 +403,9 @@ export const CourtScheduleScreen: React.FC = () => {
             showsHorizontalScrollIndicator={false}
             style={styles.courtScroll}
           >
-            {courts.map((court) => {
+            {courts.map((court, index) => {
               const isSelected = selectedCourt?._id === court._id;
+              const courtImg = getCourtImage(court, index);
               return (
                 <TouchableOpacity
                   key={court._id}
@@ -374,30 +419,41 @@ export const CourtScheduleScreen: React.FC = () => {
                       setSelectedSubCourt(court.sub_courts[0]);
                     }
                   }}
+                  activeOpacity={0.85}
                 >
-                  <View style={styles.courtBadgeRow}>
-                    <Text style={styles.courtDistrictBadge}>{court.district}</Text>
-                    <Text style={styles.courtRating}>⭐ {court.rating_avg} ({court.rating_count})</Text>
+                  <View style={styles.courtImgWrap}>
+                    <Image source={{ uri: courtImg }} style={styles.courtThumb} resizeMode="cover" />
+                    <View style={styles.courtBadgeTopRow}>
+                      <Text style={styles.courtDistrictBadge}>📍 {court.district}</Text>
+                      <Text style={styles.courtRatingBadge}>⭐ {court.rating_avg}</Text>
+                    </View>
+                    {isSelected && (
+                      <View style={styles.selectedPill}>
+                        <Text style={styles.selectedPillText}>✓ Đang chọn</Text>
+                      </View>
+                    )}
                   </View>
-                  <Text style={styles.courtName} numberOfLines={1}>
-                    {court.name}
-                  </Text>
-                  <Text style={styles.courtAddress} numberOfLines={1}>
-                    {court.address}
-                  </Text>
-                  <View style={styles.courtMetaRow}>
-                    <Text style={styles.courtMetaTag}>{court.carpet_type}</Text>
-                    <Text style={styles.courtMetaTag}>
-                      {court.court_type === 'indoor' ? 'Trong nhà' : 'Ngoài trời'}
+                  <View style={styles.courtCardBody}>
+                    <Text style={styles.courtName} numberOfLines={1}>
+                      {court.name}
                     </Text>
-                  </View>
-                  <View style={styles.courtPriceRow}>
-                    <Text style={styles.courtPrice}>
-                      {court.hourly_rate.toLocaleString('vi-VN')}đ/h
+                    <Text style={styles.courtAddress} numberOfLines={1}>
+                      {court.address}
                     </Text>
-                    <Text style={styles.courtPeakPrice}>
-                      Giờ vàng: {(court.peak_hour_rate || court.hourly_rate).toLocaleString('vi-VN')}đ
-                    </Text>
+                    <View style={styles.courtMetaRow}>
+                      <Text style={styles.courtMetaTag}>🟩 {court.carpet_type}</Text>
+                      <Text style={styles.courtMetaTag}>
+                        {court.court_type === 'indoor' ? '🏢 Trong nhà' : '🌤️ Ngoài trời'}
+                      </Text>
+                    </View>
+                    <View style={styles.courtPriceRow}>
+                      <Text style={styles.courtPrice}>
+                        {court.hourly_rate.toLocaleString('vi-VN')}đ<Text style={{ fontSize: 11, fontWeight: 'normal' }}>/h</Text>
+                      </Text>
+                      <Text style={styles.courtPeakPrice}>
+                        Giờ vàng: {(court.peak_hour_rate || court.hourly_rate).toLocaleString('vi-VN')}đ
+                      </Text>
+                    </View>
                   </View>
                 </TouchableOpacity>
               );
@@ -407,6 +463,28 @@ export const CourtScheduleScreen: React.FC = () => {
 
         {selectedCourt && (
           <>
+            {/* Chi tiết cụm sân được chọn & Tiện ích thân thiện */}
+            <View style={styles.selectedHeroBox}>
+              <View style={styles.selectedHeroHeader}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.selectedHeroSub}>CỤM SÂN BẠN ĐANG XEM</Text>
+                  <Text style={styles.selectedHeroTitle}>{selectedCourt.name}</Text>
+                  <Text style={styles.selectedHeroAddr}>📍 {selectedCourt.address}</Text>
+                </View>
+                <View style={styles.ratingBadgeBig}>
+                  <Text style={styles.ratingBigVal}>⭐ {selectedCourt.rating_avg}</Text>
+                  <Text style={styles.ratingBigCount}>{selectedCourt.rating_count} đánh giá</Text>
+                </View>
+              </View>
+              <View style={styles.amenityRow}>
+                {(selectedCourt.amenities || ['Wifi tốc độ cao', 'Thảm Yonex BWF', 'Tắm nóng lạnh', 'Bãi đỗ ô tô', 'Căng tin nước']).map((am, i) => (
+                  <View key={i} style={styles.amenityChip}>
+                    <Text style={styles.amenityChipText}>✓ {am}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+
             {/* 3. Calendar Strip 7 ngày tới */}
             <Text style={styles.sectionHeader}>📅 Chọn Ngày Đặt Sân (7 ngày tới)</Text>
             <ScrollView
@@ -617,32 +695,215 @@ const styles = StyleSheet.create({
   courtScroll: {
     marginBottom: 8,
   },
-  courtCard: {
-    width: 255,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+  // Banner Hero đón chào
+  heroBannerWrap: {
+    height: 140,
+    borderRadius: 18,
+    overflow: 'hidden',
+    marginBottom: 14,
+    position: 'relative',
+    backgroundColor: '#0F172A',
+  },
+  heroBannerImg: {
+    width: '100%',
+    height: '100%',
+    opacity: 0.72,
+  },
+  heroBannerOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     padding: 14,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
+  },
+  heroTagRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 6,
+  },
+  heroLivePill: {
+    backgroundColor: '#065F46',
+    color: '#A7F3D0',
+    fontSize: 10,
+    fontWeight: '800',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
+  heroBadgePill: {
+    backgroundColor: '#D97706',
+    color: '#FEF3C7',
+    fontSize: 10,
+    fontWeight: '800',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
+  heroTitle: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(0,0,0,0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  heroSubtitle: {
+    fontSize: 11,
+    color: '#E2E8F0',
+    marginTop: 2,
+    fontWeight: '500',
+  },
+  // Court Card với ảnh minh họa chân thực
+  courtCard: {
+    width: 260,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
     marginRight: 12,
     borderWidth: 2,
     borderColor: '#E2E8F0',
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 3,
   },
   courtCardSelected: {
     borderColor: '#0D9488',
     backgroundColor: '#F0FDFA',
+    shadowColor: '#0D9488',
+    shadowOpacity: 0.2,
+  },
+  courtImgWrap: {
+    width: '100%',
+    height: 120,
+    position: 'relative',
+    backgroundColor: '#E2E8F0',
+  },
+  courtThumb: {
+    width: '100%',
+    height: '100%',
+  },
+  courtBadgeTopRow: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    right: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  courtDistrictBadge: {
+    backgroundColor: 'rgba(15, 23, 42, 0.75)',
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  courtRatingBadge: {
+    backgroundColor: '#FEF3C7',
+    color: '#B45309',
+    fontSize: 11,
+    fontWeight: '800',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  selectedPill: {
+    position: 'absolute',
+    bottom: 8,
+    right: 8,
+    backgroundColor: '#0D9488',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  selectedPillText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  courtCardBody: {
+    padding: 12,
+  },
+  // Box chi tiết cụm sân được chọn
+  selectedHeroBox: {
+    borderRadius: 16,
+    padding: 14,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#CCFBF1',
+    backgroundColor: '#F0FDFA',
+  },
+  selectedHeroHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+  },
+  selectedHeroSub: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#0F766E',
+    letterSpacing: 0.5,
+  },
+  selectedHeroTitle: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#0F172A',
+    marginTop: 2,
+  },
+  selectedHeroAddr: {
+    fontSize: 12,
+    color: '#475569',
+    marginTop: 2,
+  },
+  ratingBadgeBig: {
+    backgroundColor: '#FEF3C7',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    alignItems: 'center',
+  },
+  ratingBigVal: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: '#B45309',
+  },
+  ratingBigCount: {
+    fontSize: 9,
+    color: '#92400E',
+    fontWeight: '600',
+  },
+  amenityRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#CCFBF1',
+  },
+  amenityChip: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#99F6E4',
+  },
+  amenityChipText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#0F766E',
   },
   courtBadgeRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 6,
-  },
-  courtDistrictBadge: {
-    backgroundColor: '#CCFBF1',
-    color: '#0F766E',
-    fontSize: 11,
-    fontWeight: '700',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
   },
   courtRating: {
     fontSize: 12,

@@ -9,7 +9,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Image,
 } from 'react-native';
+import { BADMINTON_IMAGES } from '../constants/badmintonTheme';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { apiRequest, getSocket } from '../config/api';
 import { useAuth } from '../context/AuthContext';
@@ -19,6 +21,8 @@ const QUICK_REPLIES = [
   '🛵 Chỗ gửi xe ở cổng nào anh em?',
   '👕 Mình mặc áo Yonex màu xanh nhé!',
   '⏰ Mình đang qua, 10 phút nữa có mặt ở sân!',
+  '🏸 Nhờ anh em mang giúp 1 ống cầu nhé!',
+  '🥤 Mình mang theo nước uống cho cả team rồi!',
 ];
 
 export const MatchChatRoomScreen: React.FC = () => {
@@ -199,13 +203,25 @@ export const MatchChatRoomScreen: React.FC = () => {
     >
       {/* Header thông tin kèo & Room Socket.io */}
       <View style={styles.roomHeader}>
+        <TouchableOpacity
+          style={styles.backBtn}
+          onPress={() => navigation.goBack()}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+        >
+          <Text style={styles.backBtnText}>←</Text>
+        </TouchableOpacity>
+        <Image
+          source={{ uri: BADMINTON_IMAGES.courtDefault2 }}
+          style={styles.headerCourtThumb}
+          resizeMode="cover"
+        />
         <View style={{ flex: 1 }}>
           <Text style={styles.roomTitle} numberOfLines={1}>
             {match?.title || 'Phòng Chat Trận Đấu'}
           </Text>
           <Text style={styles.roomSub}>
-            🟢 Socket Room: match_{String(matchId).slice(-6)} •{' '}
-            {match?.current_players?.length || 1}/{match?.max_players || 6} thành viên
+            🟢 {match?.location_name || 'Sân Cầu Lông'} •{' '}
+            {match?.current_players?.length || 1}/{match?.max_players || 6} người
           </Text>
         </View>
         <TouchableOpacity
@@ -254,20 +270,28 @@ export const MatchChatRoomScreen: React.FC = () => {
               {!isMe && (
                 <Text style={styles.senderName}>{item.sender_name}</Text>
               )}
-              <View
-                style={[
-                  styles.msgBubble,
-                  isMe ? styles.msgBubbleMe : styles.msgBubbleOther,
-                ]}
-              >
-                <Text
+              <View style={[styles.bubbleWithAvatarRow, isMe && { justifyContent: 'flex-end' }]}>
+                {!isMe && (
+                  <Image
+                    source={{ uri: item.sender_avatar || BADMINTON_IMAGES.avatarFemale1 }}
+                    style={styles.chatAvatarSmall}
+                  />
+                )}
+                <View
                   style={[
-                    styles.msgContent,
-                    isMe ? { color: '#FFFFFF' } : { color: '#0F172A' },
+                    styles.msgBubble,
+                    isMe ? styles.msgBubbleMe : styles.msgBubbleOther,
                   ]}
                 >
-                  {item.content}
-                </Text>
+                  <Text
+                    style={[
+                      styles.msgContent,
+                      isMe ? { color: '#FFFFFF' } : { color: '#0F172A' },
+                    ]}
+                  >
+                    {item.content}
+                  </Text>
+                </View>
               </View>
               <View style={styles.msgStatusRow}>
                 <Text style={styles.msgTime}>{formatTime(item.created_at)}</Text>
@@ -318,6 +342,39 @@ export const MatchChatRoomScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  backBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: '#F1F5F9',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backBtnText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#0F172A',
+  },
+  headerCourtThumb: {
+    width: 44,
+    height: 44,
+    borderRadius: 10,
+    backgroundColor: '#E2E8F0',
+  },
+  bubbleWithAvatarRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 6,
+  },
+  chatAvatarSmall: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    marginBottom: 2,
+  },
+
   container: {
     flex: 1,
     backgroundColor: '#F1F5F9',

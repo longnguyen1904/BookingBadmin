@@ -10,8 +10,11 @@ import {
   Alert,
   ActivityIndicator,
   RefreshControl,
+  Image,
 } from 'react-native';
+import { BADMINTON_IMAGES } from '../constants/badmintonTheme';
 import { useNavigation } from '@react-navigation/native';
+import { rootNavigate } from '../navigation/navigationRef';
 import { apiRequest, getSocket } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import { MatchRequest, SkillLevel } from '../types/models';
@@ -111,9 +114,10 @@ export const MatchFeedScreen: React.FC = () => {
         return;
       }
       fetchMatches();
-      navigation.navigate('MatchChatRoom', {
-        match: res.match || match,
-      });
+      rootNavigate('MatchChatRoom', { match: res.match || match });
+      try {
+        navigation.navigate('MatchChatRoom', { match: res.match || match });
+      } catch (_) {}
     } catch (error: any) {
       Alert.alert('Lỗi', error.message);
     }
@@ -149,8 +153,12 @@ export const MatchFeedScreen: React.FC = () => {
         Alert.alert('Đăng kèo thành công!', 'Đã tạo bài ghép kèo và mở phòng Chat trận đấu.', [
           {
             text: 'Vào Phòng Chat',
-            onPress: () =>
-              navigation.navigate('MatchChatRoom', { match: res.match }),
+            onPress: () => {
+              rootNavigate('MatchChatRoom', { match: res.match });
+              try {
+                navigation.navigate('MatchChatRoom', { match: res.match });
+              } catch (_) {}
+            },
           },
           { text: 'Đóng' },
         ]);
@@ -275,13 +283,17 @@ export const MatchFeedScreen: React.FC = () => {
               <View key={match._id} style={styles.matchCard}>
                 {/* Header chủ kèo & trạng thái */}
                 <View style={styles.creatorRow}>
-                  <View style={styles.avatar}>
-                    <Text style={styles.avatarText}>
-                      {creatorName.slice(0, 2).toUpperCase()}
-                    </Text>
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.creatorName}>{creatorName} (Chủ kèo)</Text>
+                  <Image
+                    source={{ uri: match.creator_id?.avatar || BADMINTON_IMAGES.avatarMale1 }}
+                    style={styles.creatorAvatarImg}
+                  />
+                  <View style={{ flex: 1, marginLeft: 10 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                      <Text style={styles.creatorName}>{creatorName}</Text>
+                      <View style={styles.creatorBadge}>
+                        <Text style={styles.creatorBadgeText}>Chủ kèo</Text>
+                      </View>
+                    </View>
                     <Text style={styles.matchMeta}>
                       📍 {match.district} • 📅 {match.scheduled_date} ({match.time_range})
                     </Text>
@@ -331,6 +343,30 @@ export const MatchFeedScreen: React.FC = () => {
                       {match.cost_per_person.toLocaleString('vi-VN')}đ/người
                     </Text>
                   </View>
+                </View>
+
+                {/* Thanh tiến độ số lượng người tham gia */}
+                <View style={styles.progressWrap}>
+                  <View style={styles.progressBarBg}>
+                    <View
+                      style={[
+                        styles.progressBarFill,
+                        {
+                          width: `${Math.min(
+                            100,
+                            Math.round((currentCount / match.max_players) * 100)
+                          )}%`,
+                          backgroundColor:
+                            currentCount >= match.max_players ? '#D97706' : '#0D9488',
+                        },
+                      ]}
+                    />
+                  </View>
+                  <Text style={styles.progressText}>
+                    {slotsNeeded > 0
+                      ? `Đã có ${currentCount} người, cần thêm ${slotsNeeded} tay vợt nữa`
+                      : 'Đã đủ thành viên, phòng chat đang trao đổi sôi nổi!'}
+                  </Text>
                 </View>
 
                 {/* Nút Tham gia kèo & Mở phòng Chat */}
@@ -481,6 +517,115 @@ export const MatchFeedScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  heroBannerWrap: {
+    height: 160,
+    borderRadius: 18,
+    overflow: 'hidden',
+    marginBottom: 14,
+    position: 'relative',
+    backgroundColor: '#0F172A',
+  },
+  heroBannerImg: {
+    width: '100%',
+    height: '100%',
+    opacity: 0.75,
+  },
+  heroBannerOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    padding: 14,
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(15, 23, 42, 0.4)',
+  },
+  heroTagRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  heroTagBadge: {
+    backgroundColor: '#0D9488',
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '800',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 999,
+  },
+  heroTagOnline: {
+    backgroundColor: '#D97706',
+    color: '#FEF3C7',
+    fontSize: 10,
+    fontWeight: '800',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 999,
+  },
+  heroHeading: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    marginTop: 4,
+  },
+  heroSubheading: {
+    fontSize: 11,
+    color: '#CBD5E1',
+    marginTop: 2,
+    fontWeight: '500',
+  },
+  heroPostBtn: {
+    backgroundColor: '#0D9488',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 8,
+    marginTop: 6,
+  },
+  heroPostBtnText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  creatorAvatarImg: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 2,
+    borderColor: '#0D9488',
+  },
+  creatorBadge: {
+    backgroundColor: '#CCFBF1',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 4,
+  },
+  creatorBadgeText: {
+    color: '#0F766E',
+    fontSize: 9,
+    fontWeight: '800',
+  },
+  progressWrap: {
+    marginTop: 10,
+    marginBottom: 6,
+  },
+  progressBarBg: {
+    height: 6,
+    backgroundColor: '#E2E8F0',
+    borderRadius: 999,
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: '100%',
+    borderRadius: 999,
+  },
+  progressText: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 4,
+    fontWeight: '600',
+  },
+
   container: {
     flex: 1,
     backgroundColor: '#F1F5F9',

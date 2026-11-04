@@ -1,9 +1,9 @@
 [
   {
-    "_id": "6aeae7c2ec641c6f1a9f2f9f",
-    "creator_id": "6aeae7c1ec641c6f1a9f2f46",
-    "booking_id": "6aeae7c2ec641c6f1a9f2f93",
-    "court_id": "6aeae7c1ec641c6f1a9f2f5b",
+    "_id": "6aeb240677ca47c73f814d40",
+    "creator_id": "6aeb240577ca47c73f814ce7",
+    "booking_id": "6aeb240677ca47c73f814d34",
+    "court_id": "6aeb240577ca47c73f814cfc",
     "title": "Cần tìm 2 tay vợt Nam/Nữ trình độ TB+ đánh đôi sân Cầu Giấy lúc 18h tối nay",
     "location_name": "Cụm Sân Cầu Lông Cầu Giấy Arena (Sân 1)",
     "district": "Cầu Giấy",
@@ -13,22 +13,22 @@
     "required_level": "intermediate",
     "max_players": 6,
     "current_players": [
-      "6aeae7c1ec641c6f1a9f2f46",
-      "6aeae7c1ec641c6f1a9f2f48",
-      "6aeae7c1ec641c6f1a9f2f47"
+      "6aeb240577ca47c73f814ce7",
+      "6aeb240577ca47c73f814ce9",
+      "6aeb240577ca47c73f814ce8"
     ],
     "cost_per_person": 75000,
     "notes": "Cầu Hải Yến S90 có sẵn, anh em mang vợt đến chiến vui vẻ hòa đồng nhé!",
     "status": "open",
-    "created_at": "2026-11-04T08:07:30.357Z",
-    "updated_at": "2026-11-04T08:07:30.357Z",
+    "created_at": "2026-11-04T12:24:38.552Z",
+    "updated_at": "2026-11-04T12:24:38.552Z",
     "__v": 0
   },
   {
-    "_id": "6aeae7c2ec641c6f1a9f2fa1",
-    "creator_id": "6aeae7c1ec641c6f1a9f2f47",
+    "_id": "6aeb240677ca47c73f814d42",
+    "creator_id": "6aeb240577ca47c73f814ce8",
     "booking_id": null,
-    "court_id": "6aeae7c1ec641c6f1a9f2f66",
+    "court_id": "6aeb240577ca47c73f814d07",
     "title": "Tuyển 3 bạn giao lưu trình độ Khá - Đánh đôi nam căng tay tại Chùa Láng",
     "location_name": "Sân Cầu Lông Đống Đa Star Club (Sân 2)",
     "district": "Đống Đa",
@@ -38,21 +38,21 @@
     "required_level": "advanced",
     "max_players": 6,
     "current_players": [
-      "6aeae7c1ec641c6f1a9f2f47",
-      "6aeae7c1ec641c6f1a9f2f46"
+      "6aeb240577ca47c73f814ce8",
+      "6aeb240577ca47c73f814ce7"
     ],
     "cost_per_person": 85000,
     "notes": "Share đều tiền sân + cầu, có nước trà đá miễn phí.",
     "status": "open",
-    "created_at": "2026-11-04T08:07:30.358Z",
-    "updated_at": "2026-11-04T08:07:30.358Z",
+    "created_at": "2026-11-04T12:24:38.584Z",
+    "updated_at": "2026-11-04T12:24:38.584Z",
     "__v": 0
   },
   {
-    "_id": "6aeae7c2ec641c6f1a9f2fa3",
-    "creator_id": "6aeae7c1ec641c6f1a9f2f48",
+    "_id": "6aeb240677ca47c73f814d44",
+    "creator_id": "6aeb240577ca47c73f814ce9",
     "booking_id": null,
-    "court_id": "6aeae7c1ec641c6f1a9f2f6f",
+    "court_id": "6aeb240577ca47c73f814d10",
     "title": "Kèo Newbie thân thiện cho người mới chơi - Giao lưu rèn kỹ thuật cơ bản",
     "location_name": "Tổ Hợp Cầu Lông Thanh Xuân Pro (Sân 3)",
     "district": "Thanh Xuân",
@@ -62,14 +62,14 @@
     "required_level": "beginner",
     "max_players": 8,
     "current_players": [
-      "6aeae7c1ec641c6f1a9f2f48",
-      "6aeae7c1ec641c6f1a9f2f49"
+      "6aeb240577ca47c73f814ce9",
+      "6aeb240577ca47c73f814cea"
     ],
     "cost_per_person": 60000,
     "notes": "Phù hợp các bạn mới tập đập/phông cầu, hỗ trợ hướng dẫn nhiệt tình.",
     "status": "open",
-    "created_at": "2026-11-04T08:07:30.359Z",
-    "updated_at": "2026-11-04T08:07:30.359Z",
+    "created_at": "2026-11-04T12:24:38.614Z",
+    "updated_at": "2026-11-04T12:24:38.614Z",
     "__v": 0
   }
 ]

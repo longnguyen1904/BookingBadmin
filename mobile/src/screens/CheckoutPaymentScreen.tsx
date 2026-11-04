@@ -9,11 +9,28 @@ import {
   Alert,
   ActivityIndicator,
   Platform,
+  Image,
 } from 'react-native';
+import { BADMINTON_IMAGES } from '../constants/badmintonTheme';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { rootNavigate } from '../navigation/navigationRef';
 import { WebView } from 'react-native-webview';
 import { apiRequest } from '../config/api';
 import { Booking, Court, ExtraService } from '../types/models';
+
+const SERVICE_IMAGES: Record<string, string> = {
+  racket_rental: BADMINTON_IMAGES.serviceRacket,
+  water_bottle: BADMINTON_IMAGES.serviceWater,
+  shuttlecock_tube: BADMINTON_IMAGES.serviceShuttlecock,
+  grip_tape: BADMINTON_IMAGES.serviceGrip,
+};
+
+const SERVICE_DESCS: Record<string, string> = {
+  racket_rental: 'Vợt Yonex Astrox căng sẵn 10.5kg',
+  water_bottle: 'Nước khoáng Aquafina 500ml ướp lạnh',
+  shuttlecock_tube: 'Ống 12 quả cầu lông Hải Yến S90 chuẩn thi đấu',
+  grip_tape: 'Quấn cán vợt VS Pro chống trơn thấm hút',
+};
 
 const DEFAULT_SERVICES: ExtraService[] = [
   { service_id: 'racket_rental', name: 'Thuê vợt cầu lông Yonex', price: 35000, unit: 'cây', quantity: 0 },
@@ -63,6 +80,27 @@ export const CheckoutPaymentScreen: React.FC = () => {
       });
     }, 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  // Lắng nghe kết quả thanh toán từ Iframe / Web Sandbox Gateway
+  useEffect(() => {
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      const handleWindowMsg = (e: MessageEvent) => {
+        try {
+          const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+          if (data && data.type === 'PAYMENT_RESULT') {
+            if (data.success) {
+              handlePaymentSuccessRedirect();
+            } else {
+              setWebViewUrl(null);
+              Alert.alert('Đã hủy giao dịch', 'Bạn chưa hoàn tất thanh toán cọc.');
+            }
+          }
+        } catch (_) {}
+      };
+      window.addEventListener('message', handleWindowMsg);
+      return () => window.removeEventListener('message', handleWindowMsg);
+    }
   }, []);
 
   const handleExpireSlot = async () => {
@@ -146,8 +184,12 @@ export const CheckoutPaymentScreen: React.FC = () => {
             [
               {
                 text: 'Xem Vé QR Điện Tử',
-                onPress: () =>
-                  navigation.navigate('MainTabs', { screen: 'BookingHistory' }),
+                onPress: () => {
+                  rootNavigate('MainTabs', { screen: 'BookingHistory' });
+                  try {
+                    navigation.navigate('BookingHistory');
+                  } catch (_) {}
+                },
               },
             ]
           );
@@ -192,8 +234,12 @@ export const CheckoutPaymentScreen: React.FC = () => {
       [
         {
           text: 'Mở Vé Điện Tử QR',
-          onPress: () =>
-            navigation.navigate('MainTabs', { screen: 'BookingHistory' }),
+          onPress: () => {
+            rootNavigate('MainTabs', { screen: 'BookingHistory' });
+            try {
+              navigation.navigate('BookingHistory');
+            } catch (_) {}
+          },
         },
       ]
     );
@@ -227,23 +273,42 @@ export const CheckoutPaymentScreen: React.FC = () => {
           secondsLeft <= 60 && { backgroundColor: '#DC2626' },
         ]}
       >
-        <Text style={styles.countdownTitle}>
-          ⏳ Thời gian giữ chỗ tạm thời (Slot Lock Countdown):
-        </Text>
+        <TouchableOpacity
+          onPress={handleReleaseAndGoBack}
+          style={{ marginRight: 8, paddingHorizontal: 8, paddingVertical: 4, backgroundColor: 'rgba(0,0,0,0.25)', borderRadius: 8 }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Text style={{ color: '#FFFFFF', fontSize: 13, fontWeight: '800' }}>← Chọn sân khác</Text>
+        </TouchableOpacity>
+        <View style={{ flex: 1, alignItems: 'center' }}>
+          <Text style={styles.countdownTitle}>
+            ⏳ Đang giữ chỗ (5 phút):
+          </Text>
+        </View>
         <Text style={styles.countdownTimer}>{formattedCountdown}</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* 1. Tóm tắt thông tin đặt sân */}
         <View style={styles.card}>
-          <Text style={styles.sectionTitle}>📋 Thông tin đơn vị đặt sân</Text>
+          <View style={styles.courtHeaderCard}>
+            <Image
+              source={{ uri: court?.images?.[0] || BADMINTON_IMAGES.courtDefault1 }}
+              style={styles.courtHeaderImg}
+              resizeMode="cover"
+            />
+            <View style={{ flex: 1, marginLeft: 12, justifyContent: 'center' }}>
+              <Text style={styles.courtHeaderSub}>SÂN CẦU LÔNG ĐÃ CHỌN</Text>
+              <Text style={styles.courtHeaderName} numberOfLines={1}>{court?.name || 'Cụm Sân Cầu Lông'}</Text>
+              <Text style={styles.courtHeaderAddr} numberOfLines={1}>📍 {court?.address || 'Hà Nội'}</Text>
+            </View>
+          </View>
+
+          <View style={styles.infoDivider} />
+
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Mã đơn giữ chỗ:</Text>
-            <Text style={styles.infoValue}>{booking?.booking_code}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Cụm sân:</Text>
-            <Text style={styles.infoValue}>{court?.name || 'Sân Cầu Lông'}</Text>
+            <Text style={styles.infoCodeValue}>{booking?.booking_code}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Sân con:</Text>
@@ -272,10 +337,15 @@ export const CheckoutPaymentScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>
             🎒 Dịch vụ đi kèm (Thuê vợt, Nước suối, Hộp cầu)
           </Text>
-          {services.map((srv) => (
+          {services.map((srv) => {
+            const srvImg = SERVICE_IMAGES[srv.service_id] || BADMINTON_IMAGES.serviceRacket;
+            const srvDesc = SERVICE_DESCS[srv.service_id] || '';
+            return (
             <View key={srv.service_id} style={styles.serviceRow}>
-              <View style={{ flex: 1 }}>
+              <Image source={{ uri: srvImg }} style={styles.serviceThumb} resizeMode="cover" />
+              <View style={{ flex: 1, marginHorizontal: 10 }}>
                 <Text style={styles.serviceName}>{srv.name}</Text>
+                {srvDesc ? <Text style={styles.serviceDesc}>{srvDesc}</Text> : null}
                 <Text style={styles.servicePrice}>
                   {srv.price.toLocaleString('vi-VN')}đ / {srv.unit}
                 </Text>
@@ -296,7 +366,8 @@ export const CheckoutPaymentScreen: React.FC = () => {
                 </TouchableOpacity>
               </View>
             </View>
-          ))}
+          );
+          })}
         </View>
 
         {/* 3. Lựa chọn hình thức thanh toán */}
@@ -314,11 +385,14 @@ export const CheckoutPaymentScreen: React.FC = () => {
               {paymentMethod === 'VNPAY' && <View style={styles.radioInner} />}
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.payMethodTitle}>
-                Cổng VNPay QR / ATM Nội Địa (Sandbox)
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Text style={styles.payMethodTitle}>Cổng VNPay QR / Thẻ ATM Nội Địa</Text>
+                <View style={styles.vnpayBadge}>
+                  <Text style={styles.vnpayBadgeText}>VNPAY</Text>
+                </View>
+              </View>
               <Text style={styles.payMethodDesc}>
-                Mở WebView quét mã QR hoặc nhập thẻ NCB Test (Đặt cọc 50%)
+                Mở giao diện thanh toán Sandbox quét mã QR hoặc nhập thẻ NCB Test (Cọc 50%)
               </Text>
             </View>
           </TouchableOpacity>
@@ -334,11 +408,14 @@ export const CheckoutPaymentScreen: React.FC = () => {
               {paymentMethod === 'MOMO' && <View style={styles.radioInner} />}
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.payMethodTitle}>
-                Ví điện tử MoMo QR (Sandbox)
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Text style={styles.payMethodTitle}>Ví Điện Tử MoMo QR</Text>
+                <View style={styles.momoBadge}>
+                  <Text style={styles.momoBadgeText}>MOMO</Text>
+                </View>
+              </View>
               <Text style={styles.payMethodDesc}>
-                Thanh toán cọc tự động qua cổng giả lập MoMo Sandbox
+                Cổng giả lập MoMo QR Sandbox tích hợp quét mã siêu nhanh (Cọc 50%)
               </Text>
             </View>
           </TouchableOpacity>
@@ -354,11 +431,14 @@ export const CheckoutPaymentScreen: React.FC = () => {
               {paymentMethod === 'CASH' && <View style={styles.radioInner} />}
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.payMethodTitle}>
-                Thanh toán trực tiếp tại sân (CASH)
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Text style={styles.payMethodTitle}>Thanh Toán Tại Sân (Tiền Mặt)</Text>
+                <View style={styles.cashBadge}>
+                  <Text style={styles.cashBadgeText}>CASH</Text>
+                </View>
+              </View>
               <Text style={styles.payMethodDesc}>
-                Xác nhận giữ lịch và xuất mã QR Check-in ngay lập tức
+                Nhận vé QR Check-in điện tử tức thì • Thanh toán tại quầy lễ tân khi nhận sân
               </Text>
             </View>
           </TouchableOpacity>
@@ -433,7 +513,31 @@ export const CheckoutPaymentScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
 
-          {webViewUrl && Platform.OS !== 'web' ? (
+          {webViewUrl && Platform.OS === 'web' ? (
+            <View style={{ flex: 1, width: '100%' }}>
+              {/* @ts-ignore - Web Iframe nhúng cổng thanh toán VNPay / MoMo Sandbox */}
+              <iframe
+                src={webViewUrl}
+                style={{
+                  width: '100%',
+                  height: 520,
+                  border: 'none',
+                  borderRadius: 12,
+                }}
+                title="Cổng thanh toán Sandbox"
+              />
+              <View style={{ padding: 14, backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: '#E2E8F0' }}>
+                <TouchableOpacity
+                  style={[styles.payNowBtn, { marginTop: 0 }]}
+                  onPress={handlePaymentSuccessRedirect}
+                >
+                  <Text style={styles.payNowBtnText}>
+                    ✓ Tôi đã thanh toán xong — Mở Vé QR Ngay
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : webViewUrl && Platform.OS !== 'web' ? (
             <WebView
               source={{ uri: webViewUrl }}
               onNavigationStateChange={handleWebViewNavChange}
@@ -451,21 +555,7 @@ export const CheckoutPaymentScreen: React.FC = () => {
               }}
               startInLoadingState
             />
-          ) : (
-            <View style={{ padding: 24, alignItems: 'center' }}>
-              <Text style={{ fontSize: 15, textAlign: 'center', marginBottom: 16 }}>
-                Cổng thanh toán Sandbox đã được mở. Sau khi xác nhận trên cổng thanh toán, bấm nút bên dưới để hoàn tất:
-              </Text>
-              <TouchableOpacity
-                style={styles.payNowBtn}
-                onPress={handlePaymentSuccessRedirect}
-              >
-                <Text style={styles.payNowBtnText}>
-                  Hoàn tất & Mở Vé Điện Tử QR
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
+          ) : null}
         </View>
       </Modal>
     </View>
@@ -473,6 +563,94 @@ export const CheckoutPaymentScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  courtHeaderCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  courtHeaderImg: {
+    width: 60,
+    height: 60,
+    borderRadius: 12,
+  },
+  courtHeaderSub: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#0F766E',
+    letterSpacing: 0.5,
+  },
+  courtHeaderName: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#0F172A',
+    marginTop: 2,
+  },
+  courtHeaderAddr: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 2,
+  },
+  infoDivider: {
+    height: 1,
+    backgroundColor: '#F1F5F9',
+    marginVertical: 10,
+  },
+  infoCodeValue: {
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: '800',
+    color: '#0D9488',
+    backgroundColor: '#F0FDFA',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  serviceThumb: {
+    width: 48,
+    height: 48,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  serviceDesc: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 1,
+    marginBottom: 2,
+  },
+  vnpayBadge: {
+    backgroundColor: '#005baa',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 4,
+  },
+  vnpayBadgeText: {
+    color: '#fff',
+    fontSize: 9,
+    fontWeight: '900',
+  },
+  momoBadge: {
+    backgroundColor: '#a50064',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 4,
+  },
+  momoBadgeText: {
+    color: '#fff',
+    fontSize: 9,
+    fontWeight: '900',
+  },
+  cashBadge: {
+    backgroundColor: '#10B981',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 4,
+  },
+  cashBadgeText: {
+    color: '#fff',
+    fontSize: 9,
+    fontWeight: '900',
+  },
+
   container: {
     flex: 1,
     backgroundColor: '#F1F5F9',
